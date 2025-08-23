@@ -4,44 +4,30 @@ using UnityEngine;
 
 public class NPCManager : MonoBehaviour
 {
-    // === HUMAN NPC SETTINGS ===
-    [Header("Human NPC Settings")]
     public GameObject npcBasePrefab;
-    public List<NPCAppearance> possibleNpcAppearances = new List<NPCAppearance>();
+    public List<HumanSprites> possibleNpcAppearances = new List<HumanSprites>();
     public List<Transform> npcContainers = new List<Transform>();
 
-    // === ANIMAL SETTINGS ===
-    [Header("Animal Settings")]
-    [Tooltip("The base prefab for animals. It MUST have the NPCController script attached.")]
     public GameObject animalBasePrefab;
-    [Tooltip("A list of all possible animal appearances.")]
-    public List<AnimalAppearance> possibleAnimalAppearances;
-    [Tooltip("The number of animals to spawn at the start of the game.")]
+    public List<AnimalSprites> possibleAnimalAppearances;
     public int initialAnimalCount = 20;
-    [Tooltip("The minimum number of animals to leave when despawning.")]
     public int minimumAnimalCount = 3;
 
-    // === GENERAL SETTINGS ===
-    [Header("General Spawning Settings")]
     public LayerMask groundLayer;
     public int maxSpawnAttempts = 20;
     public float minX = -50f;
     public float maxX = 50f;
     public float spawnY = 30f;
 
-    // --- Private variables for tracking ---
     private List<NPCController> activeNpcs = new List<NPCController>();
     private List<GameObject> activeAnimals = new List<GameObject>();
 
-    // NPC Tracking
     private int currentPopulation = 0;
-    private NPCAppearance.Era lastCheckedEra;
+    private HumanSprites.Era lastCheckedEra;
 
-    // Animal Tracking
     private bool animalDespawningActive = false;
     private int lastTurnAnimalDespawned = -1;
 
-    // Initialization Flags
     private bool initialNpcSpawnDone = false;
     private bool initialAnimalSpawnDone = false;
     private bool isInitialized = false;
@@ -50,8 +36,6 @@ public class NPCManager : MonoBehaviour
     {
         if (GameManager.Instance == null) return;
 
-        // --- INITIALIZATION ---
-        // Both initial spawns must wait for the ground to be active.
         if (!initialNpcSpawnDone || !initialAnimalSpawnDone)
         {
             if (FindGroundPosition() != null)
@@ -61,12 +45,10 @@ public class NPCManager : MonoBehaviour
             }
         }
 
-        if (!isInitialized) return; // Wait for initialization to complete
+        if (!isInitialized) return;
 
         int currentTurn = GameManager.Instance.CurrentTurn;
 
-        // --- HUMAN NPC LOGIC ---
-        // 1. Check for population increases
         if (GameManager.Instance.Population > currentPopulation)
         {
             int populationDifference = GameManager.Instance.Population - currentPopulation;
@@ -74,23 +56,18 @@ public class NPCManager : MonoBehaviour
             currentPopulation = GameManager.Instance.Population;
         }
 
-        // 2. Check for era change to update NPC appearances
-        NPCAppearance.Era currentEra = GetCurrentEra(currentTurn);
+        HumanSprites.Era currentEra = GetCurrentEra(currentTurn);
         if (currentEra != lastCheckedEra)
         {
             UpdateAllNpcAppearances(currentEra);
             lastCheckedEra = currentEra;
         }
 
-        // --- ANIMAL LOGIC ---
-        // 1. Check if we should start despawning animals
-        if (!animalDespawningActive && currentEra == NPCAppearance.Era.Modern)
+        if (!animalDespawningActive && currentEra == HumanSprites.Era.Modern)
         {
-            Debug.Log("Modern Era reached. Animal population will now decline.");
             animalDespawningActive = true;
         }
 
-        // 2. If despawning is active, remove one animal per new turn
         if (animalDespawningActive && currentTurn > lastTurnAnimalDespawned)
         {
             lastTurnAnimalDespawned = currentTurn;
@@ -98,7 +75,6 @@ public class NPCManager : MonoBehaviour
         }
     }
 
-    // --- INITIAL SPAWNERS ---
     private void TryInitialNpcSpawn()
     {
         currentPopulation = GameManager.Instance.Population;
@@ -111,7 +87,6 @@ public class NPCManager : MonoBehaviour
 
     private void SpawnInitialAnimals()
     {
-        Debug.Log($"Spawning {initialAnimalCount} initial animals.");
         for (int i = 0; i < initialAnimalCount; i++) SpawnAnimal();
         initialAnimalSpawnDone = true;
         CheckInitialization();
@@ -122,22 +97,19 @@ public class NPCManager : MonoBehaviour
         if (initialNpcSpawnDone && initialAnimalSpawnDone)
         {
             isInitialized = true;
-            Debug.Log("NPC and Animal Managers are initialized.");
         }
     }
-
-    // --- HUMAN NPC METHODS ---
     private void SpawnNpc()
     {
         if (npcBasePrefab == null || npcContainers.Count == 0 || possibleNpcAppearances.Count == 0) return;
         Vector2? groundPos = FindGroundPosition();
         if (groundPos.HasValue)
         {
-            NPCAppearance.Era currentEra = GetCurrentEra(GameManager.Instance.CurrentTurn);
-            List<NPCAppearance> eraAppearances = possibleNpcAppearances.Where(a => a.era == currentEra).ToList();
+            HumanSprites.Era currentEra = GetCurrentEra(GameManager.Instance.CurrentTurn);
+            List<HumanSprites> eraAppearances = possibleNpcAppearances.Where(a => a.era == currentEra).ToList();
             if (eraAppearances.Count == 0) return;
 
-            NPCAppearance chosenAppearance = eraAppearances[Random.Range(0, eraAppearances.Count)];
+            HumanSprites chosenAppearance = eraAppearances[Random.Range(0, eraAppearances.Count)];
             GameObject newNpcObject = Instantiate(npcBasePrefab, groundPos.Value, Quaternion.identity);
 
             NPCController npcController = newNpcObject.GetComponent<NPCController>();
@@ -158,9 +130,9 @@ public class NPCManager : MonoBehaviour
         }
     }
 
-    private void UpdateAllNpcAppearances(NPCAppearance.Era newEra)
+    private void UpdateAllNpcAppearances(HumanSprites.Era newEra)
     {
-        List<NPCAppearance> eraAppearances = possibleNpcAppearances.Where(a => a.era == newEra).ToList();
+        List<HumanSprites> eraAppearances = possibleNpcAppearances.Where(a => a.era == newEra).ToList();
         if (eraAppearances.Count == 0) return;
 
         foreach (NPCController npc in activeNpcs)
@@ -180,7 +152,7 @@ public class NPCManager : MonoBehaviour
         Vector2? groundPos = FindGroundPosition();
         if (groundPos.HasValue)
         {
-            AnimalAppearance chosenAppearance = possibleAnimalAppearances[Random.Range(0, possibleAnimalAppearances.Count)];
+            AnimalSprites chosenAppearance = possibleAnimalAppearances[Random.Range(0, possibleAnimalAppearances.Count)];
             GameObject newAnimalObject = Instantiate(animalBasePrefab, groundPos.Value, Quaternion.identity);
 
             var sr = newAnimalObject.GetComponentInChildren<SpriteRenderer>();
@@ -210,12 +182,11 @@ public class NPCManager : MonoBehaviour
         }
     }
 
-    // --- HELPER METHODS ---
-    private NPCAppearance.Era GetCurrentEra(int turn)
+    private HumanSprites.Era GetCurrentEra(int turn)
     {
-        if (turn <= 40) return NPCAppearance.Era.Founding;
-        if (turn <= 80) return NPCAppearance.Era.Golden;
-        return NPCAppearance.Era.Modern;
+        if (turn <= 40) return HumanSprites.Era.Founding;
+        if (turn <= 80) return HumanSprites.Era.Golden;
+        return HumanSprites.Era.Modern;
     }
 
     private Vector2? FindGroundPosition()

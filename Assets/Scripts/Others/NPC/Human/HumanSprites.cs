@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "NPCAppearance", menuName = "Scriptable Objects/NPCAppearance")]
-public class NPCAppearance : ScriptableObject
+public class HumanSprites : ScriptableObject
 {
     public enum Era { Founding, Golden, Modern }
 
