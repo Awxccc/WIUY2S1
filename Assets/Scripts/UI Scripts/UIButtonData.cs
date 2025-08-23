@@ -9,7 +9,6 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     public string BuildingName;
     public Sprite BuildingImage;
     public GameObject BuildingPrefab;
-    public GameObject InProgressPrefab;
     public PlotManager.PlotBuildable BuildingType;
     public int TurnsToBuild;
     public int TileSizeWidth;
@@ -26,7 +25,6 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     private TextMeshProUGUI PlotNameText, PlotResource1Text, PlotResource2Text, PlotResource3Text, PlotResource4Text;
     private TextMeshProUGUI PlotSizeText, PlotTurnsText, PlotDescriptionText;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         // Search through all GameObjects in the scene and find one specifically called 'UI-PlotInfo'
@@ -79,7 +77,7 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
         Description = plotData.Description;
     }
 
-    // Update the 'UI-PlotInfo' visual side of things to visually visualize the visuals
+    // Update the 'UI-PlotInfo' panel content
     void UpdateDescriptiveContent()
     {
         if (PlotImage != null && BuildingImage != null)
@@ -114,7 +112,16 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     {
         if (BuildingManager.Instance != null && BuildingPrefab != null)
         {
-            BuildingManager.Instance.StartPlacement(BuildingPrefab, TileSizeWidth, TileSizeHeight, BuildingName, BuildingType, TurnsToBuild);
+            // ✅ Pass TurnsToBuild and BuildingImage (needed for construction/progress system)
+            BuildingManager.Instance.StartPlacement(
+                BuildingPrefab,
+                TileSizeWidth,
+                TileSizeHeight,
+                BuildingName,
+                BuildingType,
+                TurnsToBuild,
+                BuildingImage
+            );
         }
         else
         {

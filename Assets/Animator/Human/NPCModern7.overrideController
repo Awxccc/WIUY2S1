@@ -1,0 +1,15 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: NPCModern7
+  m_Controller: {fileID: 9100000, guid: e6a1ca0e3cb16a2499fe460ecd2b6682, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: b25d9b3761af58f418c94df3ec5dbdd0, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 6589d2b12ff467a4f9ecaec9feabc938, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 1ef4b6253b06f9f488d15bbe13ba8fba, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 4763ea97168e0274e9455df8e2ab71ce, type: 2}

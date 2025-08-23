@@ -4,20 +4,21 @@ public class GameManager : MonoBehaviour
 {
     [Header("Game Manager Settings")]
     public static GameManager Instance;
-    public int ViewingQuadrant; // Determine which Quadrant is currently in view
-    public int Funds, Wood, Stone, Metal, Population; // Game Resources
+    public int ViewingQuadrant;
+
+    // Game Resources
+    public int Funds, Wood, Stone, Metal, Population;
     public float Mood;
 
-    //Turns
-    [SerializeField] private ScriptableTurns scriptableTurns;
+    // Turn System
     private int currentTurn;
-    private int buildTurn;
-    private float currentTurnTime;
-    private float initialTurnTimeCount;
-    public int CurrentTurn { get { return currentTurn; } }
-    public int BuildTurn { get { return buildTurn; } }
-    public float CurrentTurnTime { get { return currentTurnTime; } }
-    // Awake is called before the application starts
+    [SerializeField] private int maxTurns;
+    [SerializeField] private float currentTurnTime;
+    [SerializeField] private float initialTurnTimeCount;
+
+    public int CurrentTurn => currentTurn;
+    public float CurrentTurnTime => currentTurnTime;
+
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -27,180 +28,85 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        DontDestroyOnLoad(gameObject);
+        //DontDestroyOnLoad(gameObject);
     }
+
     private void Start()
     {
-        initialTurnTimeCount = scriptableTurns.TimeForEachTurn;
+        currentTurn = 1;
         currentTurnTime = initialTurnTimeCount;
-        currentTurn = scriptableTurns.StartingTurn;
     }
+
     private void Update()
     {
         UpdateTurns();
     }
 
-    // Global Functions (Add-Remove-Set resources)
-    public void AddFunds(int amount)
-    {
-        Funds += amount;
-        Debug.Log("Added " + amount + " funds! Current Funds: $" + Funds);
-    }
+    // =============================
+    // Resource Management
+    // =============================
 
-    public void RemoveFunds(int amount)
-    {
-        Funds -= amount;
-        if (Funds < 0) Funds = 0;
-        Debug.Log("Removed " + amount + " funds! Current Funds $: " + Funds);
-    }
+    public void AddFunds(int amount) { Funds += amount; Debug.Log($"Added {amount} funds! Current: {Funds}"); }
+    public void RemoveFunds(int amount) { Funds = Mathf.Max(0, Funds - amount); Debug.Log($"Removed {amount} funds! Current: {Funds}"); }
+    public void SetFunds(int amount) { Funds = amount; Debug.Log($"Set funds to: {Funds}"); }
 
-    public void SetFunds(int amount)
-    {
-        Funds = amount;
-        Debug.Log("Set funds to: $" + Funds);
-    }
+    public void AddWood(int amount) { Wood += amount; Debug.Log($"Added {amount} wood! Current: {Wood}"); }
+    public void RemoveWood(int amount) { Wood = Mathf.Max(0, Wood - amount); Debug.Log($"Removed {amount} wood! Current: {Wood}"); }
+    public void SetWood(int amount) { Wood = amount; Debug.Log($"Set wood to: {Wood}"); }
 
-    public void AddWood(int amount)
-    {
-        Wood += amount;
-        Debug.Log("Added " + amount + " wood! Current Wood: " + Wood);
-    }
+    public void AddStone(int amount) { Stone += amount; Debug.Log($"Added {amount} stone! Current: {Stone}"); }
+    public void RemoveStone(int amount) { Stone = Mathf.Max(0, Stone - amount); Debug.Log($"Removed {amount} stone! Current: {Stone}"); }
+    public void SetStone(int amount) { Stone = amount; Debug.Log($"Set stone to: {Stone}"); }
 
-    public void RemoveWood(int amount)
-    {
-        Wood -= amount;
-        if (Wood < 0) Wood = 0;
-        Debug.Log("Removed " + amount + " wood! Current Wood: " + Wood);
-    }
+    public void AddMetal(int amount) { Metal += amount; Debug.Log($"Added {amount} metal! Current: {Metal}"); }
+    public void RemoveMetal(int amount) { Metal = Mathf.Max(0, Metal - amount); Debug.Log($"Removed {amount} metal! Current: {Metal}"); }
+    public void SetMetal(int amount) { Metal = amount; Debug.Log($"Set metal to: {Metal}"); }
 
-    public void SetWood(int amount)
-    {
-        Wood = amount;
-        Debug.Log("Set wood to: " + Wood);
-    }
+    public void AddPopulation(int amount) { Population += amount; Debug.Log($"Added {amount} population! Current: {Population}"); }
+    public void RemovePopulation(int amount) { Population = Mathf.Max(0, Population - amount); Debug.Log($"Removed {amount} population! Current: {Population}"); }
+    public void SetPopulation(int amount) { Population = amount; Debug.Log($"Set population to: {Population}"); }
 
-    public void AddStone(int amount)
-    {
-        Stone += amount;
-        Debug.Log("Added " + amount + " stone! Current Stone: " + Stone);
-    }
-
-    public void RemoveStone(int amount)
-    {
-        Stone -= amount;
-        if (Stone < 0) Stone = 0;
-        Debug.Log("Removed " + amount + " stone! Current Stone: " + Stone);
-    }
-
-    public void SetStone(int amount)
-    {
-        Stone = amount;
-        Debug.Log("Set stone to: " + Stone);
-    }
-
-    public void AddMetal(int amount)
-    {
-        Metal += amount;
-        Debug.Log("Added " + amount + " metal! Current Metal: " + Metal);
-    }
-
-    public void RemoveMetal(int amount)
-    {
-        Metal -= amount;
-        if (Metal < 0) Metal = 0;
-        Debug.Log("Removed " + amount + " metal! Current Metal: " + Metal);
-    }
-
-    public void SetMetal(int amount)
-    {
-        Metal = amount;
-        Debug.Log("Set metal to: " + Metal);
-    }
-
-    public void AddPopulation(int amount)
-    {
-        Population += amount;
-        Debug.Log("Added " + amount + " population! Current Population: " + Population);
-    }
-
-    public void RemovePopulation(int amount)
-    {
-        Population -= amount;
-        if (Population < 0) Population = 0;
-        Debug.Log("Removed " + amount + " population! Current Population: " + Population);
-    }
-
-    public void SetPopulation(int amount)
-    {
-        Population = amount;
-        Debug.Log("Set population to: " + Population);
-    }
-
-    public void AddMood(float amount)
-    {
-        Mood += amount;
-        Debug.Log("Increased " + amount + " mood! Current Mood: " + Mood);
-    }
-
-    public void RemoveMood(float amount)
-    {
-        Mood -= amount;
-        if (Population < 0) Population = 0;
-        Debug.Log("Decreased " + amount + " mood! Current Mood: " + Mood);
-    }
-
-    public void SetMood(float amount)
-    {
-        Mood = amount;
-        Debug.Log("Set population to: " + Mood);
-    }
+    public void AddMood(float amount) { Mood += amount; Debug.Log($"Increased {amount} mood! Current: {Mood}"); }
+    public void RemoveMood(float amount) { Mood = Mathf.Max(0, Mood - amount); Debug.Log($"Decreased {amount} mood! Current: {Mood}"); }
+    public void SetMood(float amount) { Mood = amount; Debug.Log($"Set mood to: {Mood}"); }
 
     // Resource Checker
-    public bool HasEnoughFunds(int amount)
-    {
-        return Funds >= amount;
-    }
+    public bool HasEnoughFunds(int amount) => Funds >= amount;
+    public bool HasEnoughWood(int amount) => Wood >= amount;
+    public bool HasEnoughStone(int amount) => Stone >= amount;
+    public bool HasEnoughMetal(int amount) => Metal >= amount;
+    public bool HasEnoughPopulation(int amount) => Population >= amount;
+    public bool HasEnoughMood(float amount) => Mood >= amount;
 
-    public bool HasEnoughWood(int amount)
-    {
-        return Wood >= amount;
-    }
-
-    public bool HasEnoughStone(int amount)
-    {
-        return Stone >= amount;
-    }
-
-    public bool HasEnoughMetal(int amount)
-    {
-        return Metal >= amount;
-    }
-
-    public bool HasEnoughPopulation(int amount)
-    {
-        return Population >= amount;
-    }
-
-    public bool HasEnoughMood(int amount)
-    {
-        return Mood >= amount;
-    }
+    // =============================
+    // Turn System
+    // =============================
     private void UpdateTurns()
     {
-        if (currentTurn < scriptableTurns.MaxTurns)
+        if (currentTurn < maxTurns)
         {
             currentTurnTime -= Time.deltaTime;
-        }
-        if (currentTurnTime <= 0)
-        {
-            currentTurn++;
-            currentTurnTime = initialTurnTimeCount;
+            if (currentTurnTime <= 0)
+            {
+                AdvanceTurn();
+            }
         }
     }
 
-    public void EndTurn()
+    private void AdvanceTurn()
     {
-        currentTurnTime = 0;
+        currentTurn++;
+        currentTurnTime = initialTurnTimeCount;
+
+        BuildingProgress[] buildings = FindObjectsByType<BuildingProgress>(FindObjectsSortMode.None);
+        foreach (var b in buildings)
+        {
+            b.BuildTurn();
+        }
     }
 
+    public void SkipTurn()
+    {
+        AdvanceTurn();
+    }
 }

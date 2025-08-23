@@ -1,0 +1,17 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd8ce2115a2cea34c909dc5ab2085bf3, type: 3}
+  m_Name: Npc_11
+  m_EditorClassIdentifier: 
+  era: 2
+  sprite: {fileID: 4723107735738678597, guid: 4b303fccbca140f43ba02a8856e3090a, type: 3}
+  animatorOverride: {fileID: 22100000, guid: cab051622276b3748ba39c21bbd9eb62, type: 2}

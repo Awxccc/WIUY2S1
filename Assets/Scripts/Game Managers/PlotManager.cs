@@ -77,7 +77,6 @@ public class PlotManager : MonoBehaviour
             UpdateNavButtonVisibility();
             lastCheckedTurn = GameManager.Instance.CurrentTurn;
         }
-
     }
 
     // Method to scan through all of the GridNavs and update their visibility

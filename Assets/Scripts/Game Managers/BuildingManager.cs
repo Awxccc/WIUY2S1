@@ -8,13 +8,17 @@ public class BuildingManager : MonoBehaviour
 
     private GameObject selectedBuildingPrefab;
     private PlotManager.PlotBuildable selectedBuildingType;
-    private int selectedBuildingWidth, selectedBuildingHeight, selectedTurnsToBuild;
+    private int selectedBuildingWidth, selectedBuildingHeight;
+    private int selectedTurnsToBuild;
     private string selectedBuildingName;
+    private Sprite selectedFinishedSprite;
+
+    private bool lastPlacementMode = false;
+    private int lastViewingQuadrant = -1;
 
     // Awake is called before the application starts
     void Awake()
     {
-        // Here to make sure only one instance of BuildingManager exists
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
@@ -24,8 +28,32 @@ public class BuildingManager : MonoBehaviour
         Instance = this;
     }
 
-    // This method is called when the player clicks a building button in UI-PlotGrid
-    public void StartPlacement(GameObject buildingPrefab, int width, int height, string buildingName, PlotManager.PlotBuildable buildingType, int turnsToBuild)
+    void Update()
+    {
+        // Toggle grid template visibility when placement state or quadrant changes
+        if ((isInPlacementMode != lastPlacementMode) || (GameManager.Instance.ViewingQuadrant != lastViewingQuadrant))
+        {
+            if (GameManager.Instance == null || GameManager.Instance.ViewingQuadrant == 0)
+                return;
+
+            GameObject currentQuadrant = GetCurrentQuadrant();
+            if (currentQuadrant == null) return;
+
+            GridTemplateScript[] allGrids = currentQuadrant.GetComponentsInChildren<GridTemplateScript>(true);
+
+            foreach (GridTemplateScript grid in allGrids)
+            {
+                grid.gameObject.SetActive(isInPlacementMode);
+            }
+
+            lastPlacementMode = isInPlacementMode;
+            lastViewingQuadrant = GameManager.Instance != null ? GameManager.Instance.ViewingQuadrant : -1;
+        }
+    }
+
+    // Called when player clicks a building button
+    public void StartPlacement(GameObject buildingPrefab, int width, int height, string buildingName,
+                               PlotManager.PlotBuildable buildingType, int turnsToBuild, Sprite finishedSprite = null)
     {
         selectedBuildingPrefab = buildingPrefab;
         selectedBuildingWidth = width;
@@ -33,42 +61,56 @@ public class BuildingManager : MonoBehaviour
         selectedBuildingName = buildingName;
         selectedBuildingType = buildingType;
         selectedTurnsToBuild = turnsToBuild;
+        selectedFinishedSprite = finishedSprite;
+
         isInPlacementMode = true;
     }
 
-    // This method is called when the player clicks the same button or has placed a building
+    // Called when placement is cancelled
     public void CancelPlacement()
     {
         isInPlacementMode = false;
         selectedBuildingPrefab = null;
+        selectedFinishedSprite = null;
     }
 
-    // Attempt to place a building at the clicked tile if its not already occupied
+    // Attempt to place a building at the clicked tile
     public void PlaceBuildingAtGrid(Vector3 gridPosition, int clickedX, int clickedY, string gridID)
     {
         if (!isInPlacementMode || selectedBuildingPrefab == null)
             return;
 
-        if (!TryPlaceAt(clickedX, 0, gridID))
+        // Ensure the building can fit in the grid
+        if (!CanBuildingFitInGrid(gridID))
         {
-            Debug.Log($"{selectedBuildingName} cannot be placed as the area is occupied or other reasons!");
+            Debug.Log($"{selectedBuildingName} is too large for this grid!");
             return;
         }
 
-        CancelPlacement();
+        // Find best X position starting from clicked tile
+        int finalX = FindBestPlacementX(clickedX, gridID);
+
+        if (finalX == -1)
+        {
+            Debug.Log($"{selectedBuildingName} cannot be placed as there is no available space!");
+            return;
+        }
+
+        // Try placing building
+        if (TryPlaceAt(finalX, 0, gridID))
+            CancelPlacement();
     }
 
-    // Method to place building prefabs at a set grid location
+    // Actually spawn the building prefab
     bool TryPlaceAt(int gridX, int gridY, string gridID)
     {
-        // Check if the building is allowed to be placed on the tile
         if (!CanPlaceOnTileType(gridX, gridY, gridID))
         {
             Debug.Log($"{selectedBuildingName} cannot be placed on this tile type!");
             return false;
         }
 
-        // Check if area is available to be placed at
+        // Check overlap with other buildings
         BuildingPosition[] allBuildings = FindObjectsByType<BuildingPosition>(FindObjectsSortMode.None);
 
         for (int x = gridX; x < gridX + selectedBuildingWidth; x++)
@@ -81,27 +123,21 @@ public class BuildingManager : MonoBehaviour
                     bool withinX = (x >= building.gridX && x < building.gridX + building.width);
                     bool withinY = (y >= building.gridY && y < building.gridY + building.height);
 
-                    // If area is already occupied, then return false
                     if (sameGrid && withinX && withinY)
                         return false;
                 }
             }
         }
 
-        // If the area is not occupied by an existing building, place at that location
+        // Find spawn tile position
         GameObject floorTile = GameObject.Find($"{gridID}_GridSquare_Pos{gridX}{gridY}");
-        Vector3 spawnPosition;
-        if (floorTile != null)
-        {
-            spawnPosition = new Vector3(floorTile.transform.position.x - 0.5f, floorTile.transform.position.y - 0.5f, 0f);
-        }
-        else
-        {
-            spawnPosition = new Vector3(gridX, gridY, 0f);
-        }
+        Vector3 spawnPosition = floorTile != null ?
+            new Vector3(floorTile.transform.position.x - 0.5f, floorTile.transform.position.y - 0.5f, 0f) :
+            new Vector3(gridX, gridY, 0f);
 
         GameObject newBuilding = Instantiate(selectedBuildingPrefab, spawnPosition, Quaternion.identity);
         newBuilding.name = selectedBuildingName + "_Building";
+        newBuilding.transform.localScale = new Vector3(selectedBuildingWidth, selectedBuildingHeight, 1f);
 
         GameObject gridTemplate = GameObject.Find(gridID);
         if (gridTemplate != null && gridTemplate.transform.parent != null)
@@ -111,14 +147,13 @@ public class BuildingManager : MonoBehaviour
         else if (gridTemplate != null)
         {
             newBuilding.transform.SetParent(gridTemplate.transform);
-            Debug.LogWarning($"Grid {gridID} has no parent, using grid itself as parent");
         }
         else
         {
             Debug.LogWarning($"Could not find grid: {gridID}");
         }
 
-
+        // Register building position
         BuildingPosition position = newBuilding.AddComponent<BuildingPosition>();
         position.gridX = gridX;
         position.gridY = gridY;
@@ -126,9 +161,17 @@ public class BuildingManager : MonoBehaviour
         position.height = selectedBuildingHeight;
         position.gridID = gridID;
 
+        // Restore construction progress system
+        BuildingProgress bp = newBuilding.GetComponent<BuildingProgress>();
+        if (bp != null)
+        {
+            bp.Initialize(selectedFinishedSprite, selectedTurnsToBuild);
+        }
+
         return true;
     }
 
+    // Check tile type
     bool CanPlaceOnTileType(int gridX, int gridY, string gridID)
     {
         GameObject tile = GameObject.Find($"{gridID}_GridSquare_Pos{gridX}{gridY}");
@@ -144,9 +187,77 @@ public class BuildingManager : MonoBehaviour
 
         return (int)requiredType == (int)tileType;
     }
+
+    // Ensure building fits in template bounds
+    bool CanBuildingFitInGrid(string gridID)
+    {
+        GameObject gridTemplate = GameObject.Find(gridID);
+        if (gridTemplate == null) return false;
+
+        GridTemplateScript grid = gridTemplate.GetComponent<GridTemplateScript>();
+        if (grid == null) return false;
+
+        return selectedBuildingWidth <= grid.templateWidth && selectedBuildingHeight <= grid.templateHeight;
+    }
+
+    // Try finding a legal position starting from clicked tile
+    int FindBestPlacementX(int clickedX, string gridID)
+    {
+        GameObject gridTemplate = GameObject.Find(gridID);
+        if (gridTemplate == null) return -1;
+
+        GridTemplateScript grid = gridTemplate.GetComponent<GridTemplateScript>();
+        if (grid == null) return -1;
+
+        int maxValidX = grid.templateWidth - selectedBuildingWidth;
+        int startX = Mathf.Min(clickedX, maxValidX);
+
+        for (int testX = startX; testX >= 0; testX--)
+        {
+            if (CanPlaceAtPosition(testX, 0, gridID))
+            {
+                return testX;
+            }
+        }
+
+        return -1;
+    }
+
+    // Test if a building can go at a given spot
+    bool CanPlaceAtPosition(int gridX, int gridY, string gridID)
+    {
+        if (!CanPlaceOnTileType(gridX, gridY, gridID))
+            return false;
+
+        BuildingPosition[] allBuildings = FindObjectsByType<BuildingPosition>(FindObjectsSortMode.None);
+
+        for (int x = gridX; x < gridX + selectedBuildingWidth; x++)
+        {
+            for (int y = gridY; y < gridY + selectedBuildingHeight; y++)
+            {
+                foreach (BuildingPosition building in allBuildings)
+                {
+                    bool sameGrid = building.gridID == gridID;
+                    bool withinX = (x >= building.gridX && x < building.gridX + building.width);
+                    bool withinY = (y >= building.gridY && y < building.gridY + building.height);
+
+                    if (sameGrid && withinX && withinY)
+                        return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    GameObject GetCurrentQuadrant()
+    {
+        string quadrantName = "Grid_Quadrant" + GameManager.Instance.ViewingQuadrant;
+        return GameObject.Find(quadrantName);
+    }
 }
 
-// Component that tracks which tile a building is occupying
+// Tracks which tile a building occupies
 public class BuildingPosition : MonoBehaviour
 {
     public int gridX, gridY, width, height;

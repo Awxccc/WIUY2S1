@@ -1,0 +1,16 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24046a8f86736144da0c09bb1a691dd2, type: 3}
+  m_Name: Cat2
+  m_EditorClassIdentifier: 
+  sprite: {fileID: 464059510, guid: d2d9de74a8ab7eb478da754bdad8f993, type: 3}
+  animatorOverride: {fileID: 22100000, guid: 83f0e96903d44a142a8252d67b6df491, type: 2}

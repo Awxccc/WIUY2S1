@@ -7,6 +7,9 @@ public class UICoreScript : MonoBehaviour
     public GameObject UIGameViewer;
     public GameObject UIPlotViewer;
     public GameObject UIWorldMap;
+    public TextMeshProUGUI YearText;
+    public TextMeshProUGUI MonthText;
+    public TextMeshProUGUI turnTimeText;
 
     [Header("Grid Quadrant References")]
     public GameObject GridQuadrant1;
@@ -20,15 +23,13 @@ public class UICoreScript : MonoBehaviour
     public GameObject PlotGridHousing;
     public GameObject PlotGridProductivity;
     public GameObject PlotGridRecreational;
+    public GameObject CancelBuildingButton;
 
     private Vector3 showPosition = new(-17.35f, 64.6f, -6.66f);
     private Vector3 hidePosition = new(-17.35f, -152f, -6.66f);
 
     private bool showPlotViewer = false;
-    private int lastViewingQuadrant = -1;
-
-    public TMP_Text turnsText;
-    public TMP_Text turnTimeText;
+    private int lastViewingQuadrant = -1, lastTurn = -1;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -43,6 +44,7 @@ public class UICoreScript : MonoBehaviour
         }
 
         UpdateUIBasedOnQuadrant();
+        UpdateTimeDisplay();
     }
 
     // Update is called once per frame
@@ -55,6 +57,13 @@ public class UICoreScript : MonoBehaviour
             lastViewingQuadrant = GameManager.Instance.ViewingQuadrant;
         }
 
+        // Check if the turn has updated, if so we update the visuals for the year & month display
+        if (GameManager.Instance != null && GameManager.Instance.CurrentTurn != lastTurn)
+        {
+            UpdateTimeDisplay();
+            lastTurn = GameManager.Instance.CurrentTurn;
+        }
+        turnTimeText.text = GameManager.Instance.CurrentTurnTime.ToString("F0") + "s";
         // Move the UIPlotViewer depending on whether it should be visible or not
         if (UIPlotViewer == null) return;
         Vector3 targetPosition = showPlotViewer ? showPosition : hidePosition;
@@ -63,7 +72,7 @@ public class UICoreScript : MonoBehaviour
 
         UIPlotViewer.transform.localPosition = newPosition;
         UICategoryButton.SetActive(showPlotViewer);
-        UpdateTurnUI();
+        CancelBuildingButton.SetActive(BuildingManager.Instance != null && BuildingManager.Instance.isInPlacementMode);
     }
 
     // Toggles the plot grid viewer for world building
@@ -72,11 +81,19 @@ public class UICoreScript : MonoBehaviour
         showPlotViewer = !showPlotViewer;
     }
 
+    // Will be called when the CancelBtn is clicked
+    public void CancelBuildingPlacement()
+    {
+        if (BuildingManager.Instance != null)
+            BuildingManager.Instance.CancelPlacement();
+    }
+
     // Go back to the isometric world map for quadrant selecting
     public void ViewWorldMap()
     {
         if (GameManager.Instance != null)
         {
+            CancelBuildingPlacement();
             GameManager.Instance.ViewingQuadrant = 0;
             showPlotViewer = false;
         }
@@ -180,12 +197,30 @@ public class UICoreScript : MonoBehaviour
         if (GridQuadrant4 != null) GridQuadrant4.SetActive(false);
     }
 
-    private void UpdateTurnUI()
+    // Update the month and year in the 'UI-InfoViewer'
+    void UpdateTimeDisplay()
     {
-        if (GameManager.Instance != null)
-        {
-            turnsText.text = "Turns: " + GameManager.Instance.CurrentTurn.ToString();
-            turnTimeText.text = "Time: " + GameManager.Instance.CurrentTurnTime.ToString("F0") + "s";
-        }
+        if (GameManager.Instance == null) return;
+
+        (int year, string month) = GetTimeFromTurn(GameManager.Instance.CurrentTurn);
+
+        // Update UI text
+        if (YearText != null)
+            YearText.text = "Year " + year.ToString();
+
+        if (MonthText != null)
+            MonthText.text = month;
+    }
+
+    // Cool function to get the year and the which half of the year it is
+    (int year, string month) GetTimeFromTurn(int turn)
+    {
+        // In case the turn start at or below 0
+        if (turn <= 0) return (1965, "First Half");
+
+        int year = 1965 + (turn - 1) / 2;
+        string month = (turn % 2 == 1) ? "First Half" : "Second Half";
+
+        return (year, month);
     }
 }
