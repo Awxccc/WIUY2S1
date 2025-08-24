@@ -95,7 +95,7 @@ public class BuildingUIManager : MonoBehaviour
         // TODO: Replace this with something more final later on!
         if (BuildingInfoText != null)
         {
-            BuildingInfoText.text = 
+            BuildingInfoText.text =
                 $"Size: {selectedBuildingData.width}x{selectedBuildingData.height}\n" +
                 $"Position: ({selectedBuildingData.gridX}, {selectedBuildingData.gridY})\n" +
                 $"Grid: {selectedBuildingData.gridID}";

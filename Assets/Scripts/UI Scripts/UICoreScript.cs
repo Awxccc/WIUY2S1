@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UICoreScript : MonoBehaviour
 {
@@ -10,6 +11,17 @@ public class UICoreScript : MonoBehaviour
     public TextMeshProUGUI YearText;
     public TextMeshProUGUI MonthText;
     public TextMeshProUGUI turnTimeText;
+    public TextMeshProUGUI FundsText;
+    public TextMeshProUGUI WoodText;
+    public TextMeshProUGUI StoneText;
+    public TextMeshProUGUI MetalText;
+    public TextMeshProUGUI PopulationText;
+    public Image MoodImage;
+    public Sprite MoodGreat;
+    public Sprite MoodGood;
+    public Sprite MoodAverage;
+    public Sprite MoodBad;
+    public Sprite MoodPoor;
 
     [Header("Grid Quadrant References")]
     public GameObject GridQuadrant1;
@@ -73,6 +85,25 @@ public class UICoreScript : MonoBehaviour
         UIPlotViewer.transform.localPosition = newPosition;
         UICategoryButton.SetActive(showPlotViewer);
         CancelBuildingButton.SetActive(BuildingManager.Instance != null && BuildingManager.Instance.isInPlacementMode);
+
+        // Update UI Resources
+        FundsText.text = GameManager.Instance.Funds.ToString();
+        WoodText.text = GameManager.Instance.Wood.ToString();
+        StoneText.text = GameManager.Instance.Stone.ToString();
+        MetalText.text = GameManager.Instance.Metal.ToString();
+        PopulationText.text = GameManager.Instance.Population.ToString();
+
+        // Update Mood Image
+        if (GameManager.Instance.Mood < 20)
+            MoodImage.sprite = MoodPoor;
+        else if (GameManager.Instance.Mood < 40)
+            MoodImage.sprite = MoodBad;
+        else if (GameManager.Instance.Mood < 60)
+            MoodImage.sprite = MoodAverage;
+        else if (GameManager.Instance.Mood < 80)
+            MoodImage.sprite = MoodGood;
+        else
+            MoodImage.sprite = MoodGreat;
     }
 
     // Toggles the plot grid viewer for world building

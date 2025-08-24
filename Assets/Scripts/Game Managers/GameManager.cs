@@ -11,8 +11,8 @@ public class GameManager : MonoBehaviour
     public float Mood;
 
     // Turn System
-    private int currentTurn;
-    [SerializeField] private int maxTurns;
+    [SerializeField] private int currentTurn;
+    [SerializeField] private int maximumTurn;
     [SerializeField] private float currentTurnTime;
     [SerializeField] private float initialTurnTimeCount;
 
@@ -78,12 +78,9 @@ public class GameManager : MonoBehaviour
     public bool HasEnoughPopulation(int amount) => Population >= amount;
     public bool HasEnoughMood(float amount) => Mood >= amount;
 
-    // =============================
-    // Turn System
-    // =============================
     private void UpdateTurns()
     {
-        if (currentTurn < maxTurns)
+        if (currentTurn < maximumTurn)
         {
             currentTurnTime -= Time.deltaTime;
             if (currentTurnTime <= 0)
@@ -97,6 +94,9 @@ public class GameManager : MonoBehaviour
     {
         currentTurn++;
         currentTurnTime = initialTurnTimeCount;
+
+        if (EventManager.Instance != null)
+            EventManager.Instance.CheckForEvents();
 
         BuildingProgress[] buildings = FindObjectsByType<BuildingProgress>(FindObjectsSortMode.None);
         foreach (var b in buildings)

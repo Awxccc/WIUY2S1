@@ -4295,6 +4295,17 @@ MonoBehaviour:
   YearText: {fileID: 160220682}
   MonthText: {fileID: 1182697694}
   turnTimeText: {fileID: 1739061887}
+  FundsText: {fileID: 0}
+  WoodText: {fileID: 0}
+  StoneText: {fileID: 0}
+  MetalText: {fileID: 0}
+  PopulationText: {fileID: 0}
+  MoodImage: {fileID: 0}
+  MoodGreat: {fileID: 0}
+  MoodGood: {fileID: 0}
+  MoodAverage: {fileID: 0}
+  MoodBad: {fileID: 0}
+  MoodPoor: {fileID: 0}
   GridQuadrant1: {fileID: 2889654856198419549}
   GridQuadrant2: {fileID: 1631579658757020371}
   GridQuadrant3: {fileID: 1509372371708427931}
@@ -4841,7 +4852,8 @@ MonoBehaviour:
   Metal: 25
   Population: 18
   Mood: 50
-  maxTurns: 122
+  currentTurn: 0
+  maximumTurn: 0
   currentTurnTime: 0
   initialTurnTimeCount: 99
 --- !u!114 &910814192
