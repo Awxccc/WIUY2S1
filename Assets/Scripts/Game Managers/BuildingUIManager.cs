@@ -83,16 +83,17 @@ public class BuildingUIManager : MonoBehaviour
     void UpdateBuildingContent()
     {
         if (selectedBuildingData == null) return;
+        BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
+        if (bp == null) return;
 
-        // Show the building name on the UI
+        // Show the building name and level on the UI
         if (BuildingNameText != null)
         {
-            string buildingName = selectedBuilding.name.Replace("_Building", ""); // Found this gem online, gonna steal it.
-            BuildingNameText.text = buildingName;
+            string buildingName = selectedBuilding.name.Replace("_Building", "");
+            BuildingNameText.text = $"{buildingName} - Level {bp.currentLevel}";
         }
 
-        // Show building details on the UI (for debugging purposes)
-        // TODO: Replace this with something more final later on!
+        // Show building details on the UI
         if (BuildingInfoText != null)
         {
             BuildingInfoText.text =
@@ -108,7 +109,30 @@ public class BuildingUIManager : MonoBehaviour
         if (selectedBuilding == null)
             return;
 
-        Debug.Log("Upgrade building pressed!");
+        BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
+        if (bp != null && bp.plotData != null && bp.plotData.Upgrades.Length > 0)
+        {
+            // The cost is determined by the nextlevel's PlotData
+            PlotManager.PlotData nextLevelData = bp.plotData.Upgrades[0];
+
+            // Check for resources for the next level
+            if (GameManager.Instance.HasEnoughFunds(nextLevelData.CostFunds) &&
+                GameManager.Instance.HasEnoughWood(nextLevelData.CostWood) &&
+                GameManager.Instance.HasEnoughStone(nextLevelData.CostStone) &&
+                GameManager.Instance.HasEnoughMetal(nextLevelData.CostMetal))
+            {
+                BuildingManager.Instance.UpgradeBuilding(selectedBuilding);
+                HideBuildingInfo();
+            }
+            else
+            {
+                Debug.Log("Not enough resources to upgrade");
+            }
+        }
+        else
+        {
+            Debug.Log("No upgrade available for this building.");
+        }
     }
 
     // Destroy the selected building

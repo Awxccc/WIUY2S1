@@ -12,6 +12,9 @@ public class BuildingManager : MonoBehaviour
     private int selectedTurnsToBuild;
     private string selectedBuildingName;
     private Sprite selectedFinishedSprite;
+    private PlotManager.PlotData selectedPlotData;
+
+    private int finalCostFunds, finalCostWood, finalCostStone, finalCostMetal;
 
     private bool lastPlacementMode = false;
     private int lastViewingQuadrant = -1;
@@ -52,16 +55,23 @@ public class BuildingManager : MonoBehaviour
     }
 
     // Called when player clicks a building button
-    public void StartPlacement(GameObject buildingPrefab, int width, int height, string buildingName,
-                               PlotManager.PlotBuildable buildingType, int turnsToBuild, Sprite finishedSprite = null)
+    public void StartPlacement(PlotManager.PlotData plotData, int turnsToBuild, int funds, int wood, int stone, int metal)
     {
-        selectedBuildingPrefab = buildingPrefab;
-        selectedBuildingWidth = width;
-        selectedBuildingHeight = height;
-        selectedBuildingName = buildingName;
-        selectedBuildingType = buildingType;
+        // Store the data for the building
+        selectedPlotData = plotData;
+        selectedBuildingPrefab = plotData.BuildingPrefab;
+        selectedBuildingWidth = plotData.TileSizeWidth;
+        selectedBuildingHeight = plotData.TileSizeHeight;
+        selectedBuildingName = plotData.PlotName;
+        selectedBuildingType = plotData.PlotBuildable;
+        selectedFinishedSprite = plotData.PlotImage;
+
+        // Store the final calculated turns and cost
         selectedTurnsToBuild = turnsToBuild;
-        selectedFinishedSprite = finishedSprite;
+        finalCostFunds = funds;
+        finalCostWood = wood;
+        finalCostStone = stone;
+        finalCostMetal = metal;
 
         isInPlacementMode = true;
     }
@@ -72,6 +82,15 @@ public class BuildingManager : MonoBehaviour
         isInPlacementMode = false;
         selectedBuildingPrefab = null;
         selectedFinishedSprite = null;
+        selectedPlotData = null;
+        selectedBuildingName = null;
+        selectedBuildingWidth = 0;
+        selectedBuildingHeight = 0;
+        selectedTurnsToBuild = 0;
+        finalCostFunds = 0;
+        finalCostWood = 0;
+        finalCostStone = 0;
+        finalCostMetal = 0;
     }
 
     // Attempt to place a building at the clicked tile
@@ -79,6 +98,16 @@ public class BuildingManager : MonoBehaviour
     {
         if (!isInPlacementMode || selectedBuildingPrefab == null)
             return;
+
+        // Check if player has enough resources before trying to place
+        if (!GameManager.Instance.HasEnoughFunds(finalCostFunds) ||
+            !GameManager.Instance.HasEnoughWood(finalCostWood) ||
+            !GameManager.Instance.HasEnoughStone(finalCostStone) ||
+            !GameManager.Instance.HasEnoughMetal(finalCostMetal))
+        {
+            Debug.Log("Not enough resources to place this building!");
+            return;
+        }
 
         // Ensure the building can fit in the grid
         if (!CanBuildingFitInGrid(gridID))
@@ -98,7 +127,15 @@ public class BuildingManager : MonoBehaviour
 
         // Try placing building
         if (TryPlaceAt(finalX, 0, gridID))
+        {
+            // Deduct resources only after the building is successfully placed
+            GameManager.Instance.RemoveFunds(finalCostFunds);
+            GameManager.Instance.RemoveWood(finalCostWood);
+            GameManager.Instance.RemoveStone(finalCostStone);
+            GameManager.Instance.RemoveMetal(finalCostMetal);
+
             CancelPlacement();
+        }
     }
 
     // Actually spawn the building prefab
@@ -165,7 +202,7 @@ public class BuildingManager : MonoBehaviour
         BuildingProgress bp = newBuilding.GetComponent<BuildingProgress>();
         if (bp != null)
         {
-            bp.Initialize(selectedFinishedSprite, selectedTurnsToBuild);
+            bp.Initialize(selectedPlotData, selectedTurnsToBuild);
         }
 
         return true;
@@ -223,7 +260,6 @@ public class BuildingManager : MonoBehaviour
         return -1;
     }
 
-    // Test if a building can go at a given spot
     bool CanPlaceAtPosition(int gridX, int gridY, string gridID)
     {
         if (!CanPlaceOnTileType(gridX, gridY, gridID))
@@ -254,6 +290,45 @@ public class BuildingManager : MonoBehaviour
     {
         string quadrantName = "Grid_Quadrant" + GameManager.Instance.ViewingQuadrant;
         return GameObject.Find(quadrantName);
+    }
+    public void UpgradeBuilding(GameObject buildingToUpgrade)
+    {
+        BuildingProgress bp = buildingToUpgrade.GetComponent<BuildingProgress>();
+        if (bp == null || bp.plotData == null || bp.plotData.Upgrades.Length == 0)
+        {
+            Debug.Log("This building cannot be upgraded.");
+            return;
+        }
+
+        PlotManager.PlotData upgradeData = bp.plotData.Upgrades[0];
+        BuildingPosition pos = buildingToUpgrade.GetComponent<BuildingPosition>();
+
+        GameManager.Instance.RemoveFunds(upgradeData.CostFunds);
+        GameManager.Instance.RemoveWood(upgradeData.CostWood);
+        GameManager.Instance.RemoveStone(upgradeData.CostStone);
+        GameManager.Instance.RemoveMetal(upgradeData.CostMetal);
+
+
+        // Instantiate the new building
+        GameObject newBuilding = Instantiate(upgradeData.BuildingPrefab, buildingToUpgrade.transform.position, Quaternion.identity);
+        newBuilding.name = upgradeData.PlotName + "_Building";
+        newBuilding.transform.localScale = new Vector3(pos.width, pos.height, 1f);
+        newBuilding.transform.SetParent(buildingToUpgrade.transform.parent);
+
+        BuildingPosition newPos = newBuilding.AddComponent<BuildingPosition>();
+        newPos.gridX = pos.gridX;
+        newPos.gridY = pos.gridY;
+        newPos.width = pos.width;
+        newPos.height = pos.height;
+        newPos.gridID = pos.gridID;
+
+        BuildingProgress newBp = newBuilding.GetComponent<BuildingProgress>();
+        if (newBp != null)
+        {
+            newBp.Initialize(upgradeData, upgradeData.TurnsToBuild);
+        }
+
+        Destroy(buildingToUpgrade);
     }
 }
 

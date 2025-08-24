@@ -8,10 +8,13 @@ public class BuildingProgress : MonoBehaviour
     private Sprite finishedSprite;
 
     private int turnsLeft;
-
-    public void Initialize(Sprite finished, int turnsToBuild)
+    public PlotManager.PlotData plotData { get; private set; }
+    public int currentLevel { get; private set; }
+    public void Initialize(PlotManager.PlotData data, int turnsToBuild)
     {
-        finishedSprite = finished;
+        plotData = data;
+        currentLevel = data.Level;
+        finishedSprite = data.PlotImage;
         turnsLeft = turnsToBuild;
 
         if (spriteRenderer != null && constructionSprite != null)

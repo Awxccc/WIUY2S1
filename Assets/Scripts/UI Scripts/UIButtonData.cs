@@ -1,7 +1,8 @@
-using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.EventSystems;
 using TMPro;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+using static PlotManager;
 
 public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
@@ -24,6 +25,9 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
     private Image PlotImage;
     private TextMeshProUGUI PlotNameText, PlotResource1Text, PlotResource2Text, PlotResource3Text, PlotResource4Text;
     private TextMeshProUGUI PlotSizeText, PlotTurnsText, PlotDescriptionText;
+
+    private PlotManager.PlotData plotData;
+    private UICoreScript uiCore;
 
     void Start()
     {
@@ -58,11 +62,16 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
             UIPlotInfo.SetActive(false);
         }
+
+        // Find the UICoreScript in the scene to access the toggle state
+        uiCore = FindFirstObjectByType<UICoreScript>();
+
     }
 
     // Set the building data that was taken from PlotManager
     public void SetPlotData(PlotManager.PlotData plotData)
     {
+        this.plotData = plotData;
         BuildingName = plotData.PlotName;
         BuildingImage = plotData.PlotImage;
         BuildingPrefab = plotData.BuildingPrefab;
@@ -110,23 +119,93 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (BuildingManager.Instance != null && BuildingPrefab != null)
+        if (BuildingManager.Instance == null || plotData.BuildingPrefab == null)
         {
-            // ✅ Pass TurnsToBuild and BuildingImage (needed for construction/progress system)
-            BuildingManager.Instance.StartPlacement(
-                BuildingPrefab,
-                TileSizeWidth,
-                TileSizeHeight,
-                BuildingName,
-                BuildingType,
-                TurnsToBuild,
-                BuildingImage
-            );
+            Debug.LogWarning("BuildingManager not found or no prefab was assigned!");
+            return;
+        }
+
+        // Check the toggle state from UICoreScript
+        if (uiCore != null && uiCore.isQuickBuildMode)
+        {
+            HandleQuickBuildClick();
         }
         else
         {
-            Debug.LogWarning("BuildingManager not found or no prefab was assigned!");
+            HandleNormalBuildClick();
         }
+    }
+
+    private void HandleNormalBuildClick()
+    {
+        // Standard placement for the Level 1 building
+        BuildingManager.Instance.StartPlacement(
+            plotData,
+            plotData.TurnsToBuild,
+            plotData.CostFunds,
+            plotData.CostWood,
+            plotData.CostStone,
+            plotData.CostMetal
+        );
+    }
+
+    private void HandleQuickBuildClick()
+    {
+        PlotData highestAffordablePlot = plotData;
+        int totalFunds = plotData.CostFunds;
+        int totalWood = plotData.CostWood;
+        int totalStone = plotData.CostStone;
+        int totalMetal = plotData.CostMetal;
+
+        PlotData currentPlot = plotData;
+        while (currentPlot.Upgrades != null && currentPlot.Upgrades.Length > 0)
+        {
+            PlotData nextUpgrade = currentPlot.Upgrades[0];
+
+            // Accumulate the costs for the next level
+            int nextLevelTotalFunds = totalFunds + nextUpgrade.CostFunds;
+            int nextLevelTotalWood = totalWood + nextUpgrade.CostWood;
+            int nextLevelTotalStone = totalStone + nextUpgrade.CostStone;
+            int nextLevelTotalMetal = totalMetal + nextUpgrade.CostMetal;
+
+            // Check if player can afford the *doubled* total cost for the next level
+            if (GameManager.Instance.HasEnoughFunds(nextLevelTotalFunds * 2) &&
+                GameManager.Instance.HasEnoughWood(nextLevelTotalWood * 2) &&
+                GameManager.Instance.HasEnoughStone(nextLevelTotalStone * 2) &&
+                GameManager.Instance.HasEnoughMetal(nextLevelTotalMetal * 2))
+            {
+                highestAffordablePlot = nextUpgrade;
+                totalFunds = nextLevelTotalFunds;
+                totalWood = nextLevelTotalWood;
+                totalStone = nextLevelTotalStone;
+                totalMetal = nextLevelTotalMetal;
+                currentPlot = nextUpgrade;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        if (!GameManager.Instance.HasEnoughFunds(plotData.CostFunds) ||
+            !GameManager.Instance.HasEnoughWood(plotData.CostWood) ||
+            !GameManager.Instance.HasEnoughStone(plotData.CostStone) ||
+            !GameManager.Instance.HasEnoughMetal(plotData.CostMetal))
+        {
+            Debug.Log("Not enough resources to build even the Level 1 building!");
+            return;
+        }
+
+        Debug.Log($"Quick Build: Placing {highestAffordablePlot.PlotName} (Level {highestAffordablePlot.Level}). " + $"Cost: {totalFunds * 2} Funds. Turns: {plotData.TurnsToBuild}");
+
+        BuildingManager.Instance.StartPlacement(
+            highestAffordablePlot,
+            plotData.TurnsToBuild,
+            totalFunds * 2,
+            totalWood * 2,
+            totalStone * 2,
+            totalMetal * 2
+        );
     }
 
     public void OnPointerEnter(PointerEventData eventData)

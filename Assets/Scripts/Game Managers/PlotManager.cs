@@ -11,6 +11,7 @@ public class PlotManager : MonoBehaviour
     {
         [Header("Plot Data Settings")]
         public string PlotName;
+        public int Level = 1;
         public Sprite PlotImage;
         public GameObject BuildingPrefab;
         public PlotCategory PlotCategory;
@@ -24,6 +25,7 @@ public class PlotManager : MonoBehaviour
         public int CostStone;
         public int CostMetal;
         public string Description = "";
+        public PlotData[] Upgrades;
     }
 
     [Header("Building Data Settings")]

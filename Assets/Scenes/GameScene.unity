@@ -4316,6 +4316,7 @@ MonoBehaviour:
   PlotGridProductivity: {fileID: 1664280629}
   PlotGridRecreational: {fileID: 1546567134}
   CancelBuildingButton: {fileID: 1860414730}
+  isQuickBuildMode: 0
 --- !u!1 &861043942
 GameObject:
   m_ObjectHideFlags: 0
@@ -4787,6 +4788,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   BuildingPlots:
   - PlotName: Wooden shacks
+    Level: 1
     PlotImage: {fileID: 21300000, guid: 18add76adf6f2e6499d816146f2db531, type: 3}
     BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
     PlotCategory: 1
@@ -4795,17 +4797,19 @@ MonoBehaviour:
     TurnsToBuild: 1
     TileSizeWidth: 3
     TileSizeHeight: 2
-    CostFunds: 25
-    CostWood: 5
-    CostStone: 5
-    CostMetal: 5
+    CostFunds: 5
+    CostWood: 1
+    CostStone: 0
+    CostMetal: 0
     Description: Test building for testing purposes.
+    Upgrades: []
   - PlotName: Fishing Hut
+    Level: 1
     PlotImage: {fileID: 21300000, guid: 7a8943dfa512c3b4ab962baeda64bb80, type: 3}
     BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
     PlotCategory: 2
     PlotBuildable: 1
-    AvailableBuildByTurn: 1
+    AvailableBuildByTurn: 0
     TurnsToBuild: 1
     TileSizeWidth: 2
     TileSizeHeight: 2
@@ -4814,12 +4818,14 @@ MonoBehaviour:
     CostStone: 5
     CostMetal: 5
     Description: Test building for testing purposes.
+    Upgrades: []
   - PlotName: Lumber Mill
+    Level: 1
     PlotImage: {fileID: 21300000, guid: 1d57b4985add19944b3049f6baf9e3bb, type: 3}
     BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
     PlotCategory: 2
     PlotBuildable: 0
-    AvailableBuildByTurn: 2
+    AvailableBuildByTurn: 0
     TurnsToBuild: 2
     TileSizeWidth: 4
     TileSizeHeight: 2
@@ -4828,6 +4834,7 @@ MonoBehaviour:
     CostStone: 5
     CostMetal: 5
     Description: Test building for testing purposes.
+    Upgrades: []
   PlotButtonPrefab: {fileID: 2921363972107623516, guid: 912beb7b5de830c40ac2af1b83a877e0, type: 3}
   GeneralContent: {fileID: 1064787995}
   HousingContent: {fileID: 2072675837}
@@ -4853,7 +4860,7 @@ MonoBehaviour:
   Population: 18
   Mood: 50
   currentTurn: 0
-  maximumTurn: 0
+  maximumTurn: 122
   currentTurnTime: 0
   initialTurnTimeCount: 99
 --- !u!114 &910814192

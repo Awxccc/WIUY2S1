@@ -1,5 +1,6 @@
 using TMPro;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class UICoreScript : MonoBehaviour
@@ -37,6 +38,8 @@ public class UICoreScript : MonoBehaviour
     public GameObject PlotGridRecreational;
     public GameObject CancelBuildingButton;
 
+    public bool isQuickBuildMode = false;
+
     private Vector3 showPosition = new(-17.35f, 64.6f, -6.66f);
     private Vector3 hidePosition = new(-17.35f, -152f, -6.66f);
 
@@ -57,6 +60,19 @@ public class UICoreScript : MonoBehaviour
 
         UpdateUIBasedOnQuadrant();
         UpdateTimeDisplay();
+        var quickUpgradeAction = InputSystem.actions.FindAction("QuickUpgrade");
+        quickUpgradeAction.started += ctx =>
+
+        {
+            if (isQuickBuildMode == false)
+            {
+                isQuickBuildMode = true;
+            }
+            else
+            {
+                isQuickBuildMode = false;
+            }
+        };
     }
 
     // Update is called once per frame
@@ -253,5 +269,11 @@ public class UICoreScript : MonoBehaviour
         string month = (turn % 2 == 1) ? "First Half" : "Second Half";
 
         return (year, month);
+    }
+
+    public void ToggleQuickBuild(bool isOn)
+    {
+        isQuickBuildMode = isOn;
+        Debug.Log("Quick Build Mode is now: " + (isOn ? "ON" : "OFF"));
     }
 }
