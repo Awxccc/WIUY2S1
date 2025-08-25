@@ -1877,7 +1877,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gamemanager: {fileID: 910814191}
-  plot: {fileID: 0}
+  plot: {fileID: 910814190}
 --- !u!114 &472466073
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2105,6 +2105,12 @@ MonoBehaviour:
   basewoodprice: 3
   basestoneprice: 5
   basemetalprice: 5
+  minWoodPrice: 2
+  maxWoodPrice: 5
+  minStonePrice: 4
+  maxStonePrice: 8
+  minMetalPrice: 4
+  maxMetalPrice: 8
   baseminsold: 1
   basemaxsold: 2
   tradeamt1: 0
@@ -3091,6 +3097,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 187698903}
+  - {fileID: 719618837}
   - {fileID: 1928552963}
   - {fileID: 1021648657}
   - {fileID: 1165657562}
@@ -3686,6 +3693,82 @@ CanvasRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 691997383}
+  m_CullTransparentMesh: 1
+--- !u!1 &719618836
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 719618837}
+  - component: {fileID: 719618839}
+  - component: {fileID: 719618838}
+  m_Layer: 0
+  m_Name: QuickBuild
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &719618837
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719618836}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2061272891}
+  m_Father: {fileID: 551842706}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchoredPosition: {x: -150, y: -108.5}
+  m_SizeDelta: {x: 100, y: 20}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &719618838
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719618836}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_Sprite: {fileID: 21300000, guid: 115634f658159a143819b036bb91f6a6, type: 3}
+  m_Type: 0
+  m_PreserveAspect: 0
+  m_FillCenter: 1
+  m_FillMethod: 4
+  m_FillAmount: 1
+  m_FillClockwise: 1
+  m_FillOrigin: 0
+  m_UseSpriteMesh: 0
+  m_PixelsPerUnitMultiplier: 1
+--- !u!222 &719618839
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 719618836}
   m_CullTransparentMesh: 1
 --- !u!1 &721665096
 GameObject:
@@ -4373,6 +4456,7 @@ MonoBehaviour:
   Cash1: {fileID: 198785813015725957}
   Cash2: {fileID: 4481319963742831501}
   Cash3: {fileID: 4140876632432135268}
+  quickBuildText: {fileID: 2061272892}
   MoodImage: {fileID: 232404362}
   MoodGreat: {fileID: 319275607353386930, guid: 08906715beb122649963880bba2ac9e6, type: 3}
   MoodGood: {fileID: 3397567449261777007, guid: 00af5c014aa414e489ed4380e8c86fb8, type: 3}
@@ -4873,94 +4957,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   BuildingPlots:
-  - PlotName: Wooden shacks
-    Level: 1
-    PlotImage: {fileID: 21300000, guid: 18add76adf6f2e6499d816146f2db531, type: 3}
-    BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
-    PlotCategory: 1
-    PlotBuildable: 0
-    AvailableBuildByTurn: 0
-    TurnsToBuild: 1
-    TileSizeWidth: 3
-    TileSizeHeight: 2
-    CostFunds: 5
-    CostWood: 1
-    CostStone: 0
-    CostMetal: 0
-    GainFunds: 1
-    GainWood: 1
-    GainStone: 1
-    GainPopulation: 1
-    Description: Test building for testing purposes.
-    Upgrades: []
-  - PlotName: Fishing Hut
-    Level: 1
-    PlotImage: {fileID: 21300000, guid: 7a8943dfa512c3b4ab962baeda64bb80, type: 3}
-    BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
-    PlotCategory: 2
-    PlotBuildable: 1
-    AvailableBuildByTurn: 0
-    TurnsToBuild: 1
-    TileSizeWidth: 2
-    TileSizeHeight: 2
-    CostFunds: 25
-    CostWood: 5
-    CostStone: 5
-    CostMetal: 5
-    GainFunds: 0
-    GainWood: 0
-    GainStone: 0
-    GainPopulation: 0
-    Description: Test building for testing purposes.
-    Upgrades: []
-  - PlotName: Lumber Mill
-    Level: 1
-    PlotImage: {fileID: 21300000, guid: 1d57b4985add19944b3049f6baf9e3bb, type: 3}
-    BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
-    PlotCategory: 2
-    PlotBuildable: 0
-    AvailableBuildByTurn: 0
-    TurnsToBuild: 2
-    TileSizeWidth: 4
-    TileSizeHeight: 2
-    CostFunds: 25
-    CostWood: 5
-    CostStone: 5
-    CostMetal: 5
-    GainFunds: 0
-    GainWood: 0
-    GainStone: 0
-    GainPopulation: 0
-    Description: Test building for testing purposes.
-    Upgrades: []
-  - PlotName: Dock
-    Level: 1
-    PlotImage: {fileID: 21300000, guid: 1d57b4985add19944b3049f6baf9e3bb, type: 3}
-    BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
-    PlotCategory: 2
-    PlotBuildable: 0
-    AvailableBuildByTurn: 0
-    TurnsToBuild: 2
-    TileSizeWidth: 4
-    TileSizeHeight: 2
-    CostFunds: 25
-    CostWood: 5
-    CostStone: 5
-    CostMetal: 5
-    GainFunds: 0
-    GainWood: 0
-    GainStone: 0
-    GainPopulation: 0
-    Description: Test building for testing purposes.
-    Upgrades: []
+  - {fileID: 11400000, guid: 09c695075d9d7df43b00642025933844, type: 2}
+  - {fileID: 11400000, guid: aafecc368e77d3a468635c0ee365e006, type: 2}
   PlotButtonPrefab: {fileID: 2921363972107623516, guid: 912beb7b5de830c40ac2af1b83a877e0, type: 3}
   GeneralContent: {fileID: 1064787995}
   HousingContent: {fileID: 2072675837}
   ProductivityContent: {fileID: 107154998}
   RecreationalContent: {fileID: 519897309}
-  references:
-    version: 2
-    RefIds: []
 --- !u!114 &910814191
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4974,7 +4977,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ViewingQuadrant: 0
-  Funds: 200
+  Funds: 90
   Wood: 25
   Stone: 25
   Metal: 25
@@ -4985,6 +4988,7 @@ MonoBehaviour:
   currentTurnTime: 0
   initialTurnTimeCount: 99
   turnCalculations: {fileID: 472466072}
+  trading: {fileID: 472466078}
 --- !u!114 &910814192
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4998,6 +5002,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isInPlacementMode: 0
+  uiCore: {fileID: 837113107}
 --- !u!114 &910814193
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5017,6 +5022,7 @@ MonoBehaviour:
   BuildingNameText: {fileID: 1361230441}
   BuildingInfoText: {fileID: 1952201194}
   Tradingbtn: {fileID: 1659312210}
+  trading: {fileID: 472466078}
 --- !u!1 &917469102
 GameObject:
   m_ObjectHideFlags: 0
@@ -12270,6 +12276,142 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2025718818}
   m_CullTransparentMesh: 1
+--- !u!1 &2061272890
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2061272891}
+  - component: {fileID: 2061272893}
+  - component: {fileID: 2061272892}
+  m_Layer: 0
+  m_Name: QuickBuildText
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &2061272891
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061272890}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 719618837}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: -2}
+  m_SizeDelta: {x: 0, y: -0.00000011920929}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2061272892
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061272890}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
+  m_Maskable: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  m_text: Quick build OFF
+  m_isRightToLeft: 0
+  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontSharedMaterials: []
+  m_fontMaterial: {fileID: 0}
+  m_fontMaterials: []
+  m_fontColor32:
+    serializedVersion: 2
+    rgba: 4281479730
+  m_fontColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_enableVertexGradient: 0
+  m_colorMode: 3
+  m_fontColorGradient:
+    topLeft: {r: 1, g: 1, b: 1, a: 1}
+    topRight: {r: 1, g: 1, b: 1, a: 1}
+    bottomLeft: {r: 1, g: 1, b: 1, a: 1}
+    bottomRight: {r: 1, g: 1, b: 1, a: 1}
+  m_fontColorGradientPreset: {fileID: 0}
+  m_spriteAsset: {fileID: 0}
+  m_tintAllSprites: 0
+  m_StyleSheet: {fileID: 0}
+  m_TextStyleHashCode: -1183493901
+  m_overrideHtmlColors: 0
+  m_faceColor:
+    serializedVersion: 2
+    rgba: 4294967295
+  m_fontSize: 11.35
+  m_fontSizeBase: 24
+  m_fontWeight: 400
+  m_enableAutoSizing: 1
+  m_fontSizeMin: 0
+  m_fontSizeMax: 120
+  m_fontStyle: 1
+  m_HorizontalAlignment: 2
+  m_VerticalAlignment: 512
+  m_textAlignment: 65535
+  m_characterSpacing: 0
+  m_wordSpacing: 0
+  m_lineSpacing: 0
+  m_lineSpacingMax: 0
+  m_paragraphSpacing: 0
+  m_charWidthMaxAdj: 0
+  m_TextWrappingMode: 1
+  m_wordWrappingRatios: 0.4
+  m_overflowMode: 0
+  m_linkedTextComponent: {fileID: 0}
+  parentLinkedComponent: {fileID: 0}
+  m_enableKerning: 0
+  m_ActiveFontFeatures: 6e72656b
+  m_enableExtraPadding: 0
+  checkPaddingRequired: 0
+  m_isRichText: 1
+  m_EmojiFallbackSupport: 1
+  m_parseCtrlCharacters: 1
+  m_isOrthographic: 1
+  m_isCullingEnabled: 0
+  m_horizontalMapping: 0
+  m_verticalMapping: 0
+  m_uvLineOffset: 0
+  m_geometrySortingOrder: 0
+  m_IsTextObjectScaleStatic: 0
+  m_VertexBufferAutoSizeReduction: 0
+  m_useMaxVisibleDescender: 1
+  m_pageToDisplay: 1
+  m_margin: {x: 0, y: 4.1471972, z: 0, w: 3.1397266}
+  m_isUsingLegacyAnimationComponent: 0
+  m_isVolumetricText: 0
+  m_hasFontAssetChanged: 0
+  m_baseMaterial: {fileID: 0}
+  m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!222 &2061272893
+CanvasRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2061272890}
+  m_CullTransparentMesh: 1
 --- !u!1 &2062297322
 GameObject:
   m_ObjectHideFlags: 0
@@ -13783,7 +13925,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 472466078}
         m_TargetAssemblyTypeName: Trading, Assembly-CSharp
         m_MethodName: purchasingstuff
         m_Mode: 3
@@ -16425,7 +16567,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 472466078}
         m_TargetAssemblyTypeName: Trading, Assembly-CSharp
         m_MethodName: purchasingstuff
         m_Mode: 3
@@ -38755,7 +38897,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 472466078}
         m_TargetAssemblyTypeName: Trading, Assembly-CSharp
         m_MethodName: purchasingstuff
         m_Mode: 3

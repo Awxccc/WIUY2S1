@@ -1,0 +1,35 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81853133c259fe8478bc94c2ac5b78d2, type: 3}
+  m_Name: Wooden Shack
+  m_EditorClassIdentifier: 
+  PlotName: Wooden Shack
+  Level: 1
+  PlotImage: {fileID: 21300000, guid: 18add76adf6f2e6499d816146f2db531, type: 3}
+  BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
+  PlotCategory: 1
+  PlotBuildable: 0
+  AvailableBuildByTurn: 0
+  TurnsToBuild: 2
+  TileSizeWidth: 3
+  TileSizeHeight: 2
+  CostFunds: 5
+  CostWood: 1
+  CostStone: 0
+  CostMetal: 0
+  GainFunds: 1
+  GainWood: 0
+  GainStone: 0
+  GainPopulation: 1
+  Description: 
+  Upgrades:
+  - {fileID: 11400000, guid: 1617aeb110ea6b84c98cc3e2942fe1a2, type: 2}

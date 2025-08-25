@@ -5,16 +5,9 @@ public class BuildingManager : MonoBehaviour
     [Header("Building Manager Settings")]
     public static BuildingManager Instance;
     public bool isInPlacementMode = false;
+    public UICoreScript uiCore;
 
-    private GameObject selectedBuildingPrefab;
-    private PlotManager.PlotBuildable selectedBuildingType;
-    private int selectedBuildingWidth, selectedBuildingHeight;
-    private int selectedTurnsToBuild;
-    private string selectedBuildingName;
-    private Sprite selectedFinishedSprite;
-    private PlotManager.PlotData selectedPlotData;
-
-    private int finalCostFunds, finalCostWood, finalCostStone, finalCostMetal;
+    private PlotData selectedPlotData;
 
     private bool lastPlacementMode = false;
     private int lastViewingQuadrant = -1;
@@ -55,24 +48,9 @@ public class BuildingManager : MonoBehaviour
     }
 
     // Called when player clicks a building button
-    public void StartPlacement(PlotManager.PlotData plotData, int turnsToBuild, int funds, int wood, int stone, int metal)
+    public void StartPlacement(PlotData plotData)
     {
-        // Store the data for the building
         selectedPlotData = plotData;
-        selectedBuildingPrefab = plotData.BuildingPrefab;
-        selectedBuildingWidth = plotData.TileSizeWidth;
-        selectedBuildingHeight = plotData.TileSizeHeight;
-        selectedBuildingName = plotData.PlotName;
-        selectedBuildingType = plotData.PlotBuildable;
-        selectedFinishedSprite = plotData.PlotImage;
-
-        // Store the final calculated turns and cost
-        selectedTurnsToBuild = turnsToBuild;
-        finalCostFunds = funds;
-        finalCostWood = wood;
-        finalCostStone = stone;
-        finalCostMetal = metal;
-
         isInPlacementMode = true;
     }
 
@@ -80,214 +58,220 @@ public class BuildingManager : MonoBehaviour
     public void CancelPlacement()
     {
         isInPlacementMode = false;
-        selectedBuildingPrefab = null;
-        selectedFinishedSprite = null;
         selectedPlotData = null;
-        selectedBuildingName = null;
-        selectedBuildingWidth = 0;
-        selectedBuildingHeight = 0;
-        selectedTurnsToBuild = 0;
-        finalCostFunds = 0;
-        finalCostWood = 0;
-        finalCostStone = 0;
-        finalCostMetal = 0;
     }
 
     // Attempt to place a building at the clicked tile
     public void PlaceBuildingAtGrid(Vector3 gridPosition, int clickedX, int clickedY, string gridID)
     {
-        if (!isInPlacementMode || selectedBuildingPrefab == null)
+        if (!isInPlacementMode || selectedPlotData == null)
             return;
 
-        // Check if player has enough resources before trying to place
-        if (!GameManager.Instance.HasEnoughFunds(finalCostFunds) ||
-            !GameManager.Instance.HasEnoughWood(finalCostWood) ||
-            !GameManager.Instance.HasEnoughStone(finalCostStone) ||
-            !GameManager.Instance.HasEnoughMetal(finalCostMetal))
+        PlotData finalPlotData;
+        int finalFunds, finalWood, finalStone, finalMetal;
+
+        // Check the Quick Build toggle when placing
+        if (uiCore != null && uiCore.isQuickBuildMode)
+        {
+            PlotData highestAffordablePlot = selectedPlotData;
+            int totalFunds = selectedPlotData.CostFunds;
+            int totalWood = selectedPlotData.CostWood;
+            int totalStone = selectedPlotData.CostStone;
+            int totalMetal = selectedPlotData.CostMetal;
+            PlotData currentPlot = selectedPlotData;
+
+            while (currentPlot.Upgrades != null && currentPlot.Upgrades.Length > 0 && currentPlot.Upgrades[0] != null)
+            {
+                PlotData nextUpgrade = currentPlot.Upgrades[0];
+                int nextLevelTotalFunds = totalFunds + nextUpgrade.CostFunds;
+                int nextLevelTotalWood = totalWood + nextUpgrade.CostWood;
+                int nextLevelTotalStone = totalStone + nextUpgrade.CostStone;
+                int nextLevelTotalMetal = totalMetal + nextUpgrade.CostMetal;
+
+                if (GameManager.Instance.HasEnoughFunds((int)(nextLevelTotalFunds * 1.5f)) &&
+                GameManager.Instance.HasEnoughWood((int)(nextLevelTotalWood * 1.5f)) &&
+                GameManager.Instance.HasEnoughStone((int)(nextLevelTotalStone * 1.5f)) &&
+                GameManager.Instance.HasEnoughMetal((int)(nextLevelTotalMetal * 1.5f)))
+                {
+                    highestAffordablePlot = nextUpgrade;
+                    totalFunds = nextLevelTotalFunds;
+                    totalWood = nextLevelTotalWood;
+                    totalStone = nextLevelTotalStone;
+                    totalMetal = nextLevelTotalMetal;
+                    currentPlot = nextUpgrade;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            finalPlotData = highestAffordablePlot;
+            if (highestAffordablePlot != selectedPlotData)
+            {
+                finalFunds = Mathf.CeilToInt(totalFunds * 1.5f);
+                finalWood = Mathf.CeilToInt(totalWood * 1.5f);
+                finalStone = Mathf.CeilToInt(totalStone * 1.5f);
+                finalMetal = Mathf.CeilToInt(totalMetal * 1.5f);
+            }
+            else
+            {
+                finalFunds = totalFunds;
+                finalWood = totalWood;
+                finalStone = totalStone;
+                finalMetal = totalMetal;
+            }
+        }
+        else
+        {
+            finalPlotData = selectedPlotData;
+            finalFunds = selectedPlotData.CostFunds;
+            finalWood = selectedPlotData.CostWood;
+            finalStone = selectedPlotData.CostStone;
+            finalMetal = selectedPlotData.CostMetal;
+        }
+
+        //Check resources with the final calculated costs
+        if (!GameManager.Instance.HasEnoughFunds(finalFunds) ||
+            !GameManager.Instance.HasEnoughWood(finalWood) ||
+            !GameManager.Instance.HasEnoughStone(finalStone) ||
+            !GameManager.Instance.HasEnoughMetal(finalMetal))
         {
             Debug.Log("Not enough resources to place this building!");
             return;
         }
 
-        // Ensure the building can fit in the grid
-        if (!CanBuildingFitInGrid(gridID))
+        // Ensure the Highest level building can fit in the grid
+        if (!CanBuildingFitInGrid(gridID, finalPlotData))
         {
-            Debug.Log($"{selectedBuildingName} is too large for this grid!");
+            Debug.Log($"{finalPlotData.PlotName} is too large for this grid!");
             return;
         }
 
-        // Find best X position starting from clicked tile
-        int finalX = FindBestPlacementX(clickedX, gridID);
-
+        int finalX = FindBestPlacementX(clickedX, gridID, finalPlotData);
         if (finalX == -1)
         {
-            Debug.Log($"{selectedBuildingName} cannot be placed as there is no available space!");
+            Debug.Log($"{finalPlotData.PlotName} cannot be placed as there is no available space!");
             return;
         }
 
-        // Try placing building
-        if (TryPlaceAt(finalX, 0, gridID))
+        // Try placing the final building
+        if (TryPlaceAt(finalX, 0, gridID, finalPlotData, finalFunds, finalWood, finalStone, finalMetal))
         {
-            // Deduct resources only after the building is successfully placed
-            GameManager.Instance.RemoveFunds(finalCostFunds);
-            GameManager.Instance.RemoveWood(finalCostWood);
-            GameManager.Instance.RemoveStone(finalCostStone);
-            GameManager.Instance.RemoveMetal(finalCostMetal);
-
+            GameManager.Instance.RemoveFunds(finalFunds);
+            GameManager.Instance.RemoveWood(finalWood);
+            GameManager.Instance.RemoveStone(finalStone);
+            GameManager.Instance.RemoveMetal(finalMetal);
             CancelPlacement();
         }
     }
 
     // Actually spawn the building prefab
-    bool TryPlaceAt(int gridX, int gridY, string gridID)
+    bool TryPlaceAt(int gridX, int gridY, string gridID, PlotData plotData, int funds, int wood, int stone, int metal)
     {
-        if (!CanPlaceOnTileType(gridX, gridY, gridID))
+        if (!CanPlaceOnTileType(gridX, gridY, gridID, plotData))
         {
-            Debug.Log($"{selectedBuildingName} cannot be placed on this tile type!");
+            Debug.Log($"{plotData.PlotName} cannot be placed on this tile type!");
             return false;
         }
 
-        // Check overlap with other buildings
         BuildingPosition[] allBuildings = FindObjectsByType<BuildingPosition>(FindObjectsSortMode.None);
-
-        for (int x = gridX; x < gridX + selectedBuildingWidth; x++)
+        for (int x = gridX; x < gridX + plotData.TileSizeWidth; x++)
         {
-            for (int y = gridY; y < gridY + selectedBuildingHeight; y++)
+            for (int y = gridY; y < gridY + plotData.TileSizeHeight; y++)
             {
                 foreach (BuildingPosition building in allBuildings)
                 {
-                    bool sameGrid = building.gridID == gridID;
-                    bool withinX = (x >= building.gridX && x < building.gridX + building.width);
-                    bool withinY = (y >= building.gridY && y < building.gridY + building.height);
-
-                    if (sameGrid && withinX && withinY)
+                    if (building.gridID == gridID && x >= building.gridX && x < building.gridX + building.width && y >= building.gridY && y < building.gridY + building.height)
                         return false;
                 }
             }
         }
 
-        // Find spawn tile position
         GameObject floorTile = GameObject.Find($"{gridID}_GridSquare_Pos{gridX}{gridY}");
-        Vector3 spawnPosition = floorTile != null ?
-            new Vector3(floorTile.transform.position.x - 0.5f, floorTile.transform.position.y - 0.5f, 0f) :
-            new Vector3(gridX, gridY, 0f);
+        Vector3 spawnPosition = floorTile != null ? new Vector3(floorTile.transform.position.x - 0.5f, floorTile.transform.position.y - 0.5f, 0f) : new Vector3(gridX, gridY, 0f);
 
-        GameObject newBuilding = Instantiate(selectedBuildingPrefab, spawnPosition, Quaternion.identity);
-        newBuilding.name = selectedBuildingName + "_Building";
-        newBuilding.transform.localScale = new Vector3(selectedBuildingWidth, selectedBuildingHeight, 1f);
+        GameObject newBuilding = Instantiate(plotData.BuildingPrefab, spawnPosition, Quaternion.identity);
+        newBuilding.name = plotData.PlotName + "_Building";
+        newBuilding.transform.localScale = new Vector3(plotData.TileSizeWidth, plotData.TileSizeHeight, 1f);
 
         GameObject gridTemplate = GameObject.Find(gridID);
-        if (gridTemplate != null && gridTemplate.transform.parent != null)
-        {
-            newBuilding.transform.SetParent(gridTemplate.transform.parent);
-        }
-        else if (gridTemplate != null)
-        {
-            newBuilding.transform.SetParent(gridTemplate.transform);
-        }
+        if (gridTemplate != null)
+            newBuilding.transform.SetParent(gridTemplate.transform.parent ?? gridTemplate.transform);
         else
-        {
             Debug.LogWarning($"Could not find grid: {gridID}");
-        }
 
-        // Register building position
         BuildingPosition position = newBuilding.AddComponent<BuildingPosition>();
         position.gridX = gridX;
         position.gridY = gridY;
-        position.width = selectedBuildingWidth;
-        position.height = selectedBuildingHeight;
+        position.width = plotData.TileSizeWidth;
+        position.height = plotData.TileSizeHeight;
         position.gridID = gridID;
+        position.totalFundsSpent = funds;
+        position.totalWoodSpent = wood;
+        position.totalStoneSpent = stone;
+        position.totalMetalSpent = metal;
 
-        if (selectedPlotData.PlotCategory == PlotManager.PlotCategory.Housing)
-        {
-            GameManager.Instance.AddPopulation(selectedPlotData.GainPopulation);
-        }
-
-        // Restore construction progress system
         BuildingProgress bp = newBuilding.GetComponent<BuildingProgress>();
         if (bp != null)
-        {
-            bp.Initialize(selectedPlotData, selectedTurnsToBuild);
-        }
+            bp.Initialize(plotData, selectedPlotData.TurnsToBuild);
 
         return true;
     }
-
-    // Check tile type
-    bool CanPlaceOnTileType(int gridX, int gridY, string gridID)
+    //Check tile type
+    bool CanPlaceOnTileType(int gridX, int gridY, string gridID, PlotData plotData)
     {
         GameObject tile = GameObject.Find($"{gridID}_GridSquare_Pos{gridX}{gridY}");
-        if (tile == null)
-            return false;
-
+        if (tile == null) return false;
         GridTemplateScript gridTemplate = tile.GetComponentInParent<GridTemplateScript>();
-        if (gridTemplate == null)
-            return false;
+        if (gridTemplate == null) return false;
 
-        GridTemplateScript.PlotBuildable tileType = gridTemplate.defaultBuildType;
-        PlotManager.PlotBuildable requiredType = selectedBuildingType;
-
-        return (int)requiredType == (int)tileType;
+        return (int)plotData.PlotBuildable == (int)gridTemplate.defaultBuildType;
     }
-
-    // Ensure building fits in template bounds
-    bool CanBuildingFitInGrid(string gridID)
+    //ensure building fits in template bounds
+    bool CanBuildingFitInGrid(string gridID, PlotData plotData)
     {
         GameObject gridTemplate = GameObject.Find(gridID);
         if (gridTemplate == null) return false;
-
         GridTemplateScript grid = gridTemplate.GetComponent<GridTemplateScript>();
         if (grid == null) return false;
 
-        return selectedBuildingWidth <= grid.templateWidth && selectedBuildingHeight <= grid.templateHeight;
+        return plotData.TileSizeWidth <= grid.templateWidth && plotData.TileSizeHeight <= grid.templateHeight;
     }
-
-    // Try finding a legal position starting from clicked tile
-    int FindBestPlacementX(int clickedX, string gridID)
+    //Try finding a legal position starting from clicked tile
+    int FindBestPlacementX(int clickedX, string gridID, PlotData plotData)
     {
         GameObject gridTemplate = GameObject.Find(gridID);
         if (gridTemplate == null) return -1;
-
         GridTemplateScript grid = gridTemplate.GetComponent<GridTemplateScript>();
         if (grid == null) return -1;
 
-        int maxValidX = grid.templateWidth - selectedBuildingWidth;
-        int startX = Mathf.Min(clickedX, maxValidX);
-
-        for (int testX = startX; testX >= 0; testX--)
+        int maxValidX = grid.templateWidth - plotData.TileSizeWidth;
+        for (int testX = Mathf.Min(clickedX, maxValidX); testX >= 0; testX--)
         {
-            if (CanPlaceAtPosition(testX, 0, gridID))
-            {
+            if (CanPlaceAtPosition(testX, 0, gridID, plotData))
                 return testX;
-            }
         }
-
         return -1;
     }
 
-    bool CanPlaceAtPosition(int gridX, int gridY, string gridID)
+    bool CanPlaceAtPosition(int gridX, int gridY, string gridID, PlotData plotData)
     {
-        if (!CanPlaceOnTileType(gridX, gridY, gridID))
+        if (!CanPlaceOnTileType(gridX, gridY, gridID, plotData))
             return false;
 
         BuildingPosition[] allBuildings = FindObjectsByType<BuildingPosition>(FindObjectsSortMode.None);
-
-        for (int x = gridX; x < gridX + selectedBuildingWidth; x++)
+        for (int x = gridX; x < gridX + plotData.TileSizeWidth; x++)
         {
-            for (int y = gridY; y < gridY + selectedBuildingHeight; y++)
+            for (int y = gridY; y < gridY + plotData.TileSizeHeight; y++)
             {
                 foreach (BuildingPosition building in allBuildings)
                 {
-                    bool sameGrid = building.gridID == gridID;
-                    bool withinX = (x >= building.gridX && x < building.gridX + building.width);
-                    bool withinY = (y >= building.gridY && y < building.gridY + building.height);
-
-                    if (sameGrid && withinX && withinY)
+                    if (building.gridID == gridID && x >= building.gridX && x < building.gridX + building.width && y >= building.gridY && y < building.gridY + building.height)
                         return false;
                 }
             }
         }
-
         return true;
     }
 
@@ -305,14 +289,27 @@ public class BuildingManager : MonoBehaviour
             return;
         }
 
-        PlotManager.PlotData upgradeData = bp.plotData.Upgrades[0];
+        PlotData upgradeData = bp.plotData.Upgrades[0];
         BuildingPosition pos = buildingToUpgrade.GetComponent<BuildingPosition>();
+
+        if (!GameManager.Instance.HasEnoughFunds(upgradeData.CostFunds) ||
+        !GameManager.Instance.HasEnoughWood(upgradeData.CostWood) ||
+        !GameManager.Instance.HasEnoughStone(upgradeData.CostStone) ||
+        !GameManager.Instance.HasEnoughMetal(upgradeData.CostMetal))
+        {
+            Debug.Log("Not enough resources to upgrade.");
+            return;
+        }
 
         GameManager.Instance.RemoveFunds(upgradeData.CostFunds);
         GameManager.Instance.RemoveWood(upgradeData.CostWood);
         GameManager.Instance.RemoveStone(upgradeData.CostStone);
         GameManager.Instance.RemoveMetal(upgradeData.CostMetal);
 
+        if (bp.plotData.PlotCategory == PlotManager.PlotCategory.Housing)
+        {
+            GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);
+        }
 
         // Instantiate the new building
         GameObject newBuilding = Instantiate(upgradeData.BuildingPrefab, buildingToUpgrade.transform.position, Quaternion.identity);
@@ -332,7 +329,13 @@ public class BuildingManager : MonoBehaviour
         {
             newBp.Initialize(upgradeData, upgradeData.TurnsToBuild);
         }
-
+        if (pos != null)
+        {
+            newPos.totalFundsSpent = pos.totalFundsSpent + upgradeData.CostFunds;
+            newPos.totalWoodSpent = pos.totalWoodSpent + upgradeData.CostWood;
+            newPos.totalStoneSpent = pos.totalStoneSpent + upgradeData.CostStone;
+            newPos.totalMetalSpent = pos.totalMetalSpent + upgradeData.CostMetal;
+        }
         Destroy(buildingToUpgrade);
     }
 }
@@ -342,4 +345,9 @@ public class BuildingPosition : MonoBehaviour
 {
     public int gridX, gridY, width, height;
     public string gridID;
+
+    public int totalFundsSpent;
+    public int totalWoodSpent;
+    public int totalStoneSpent;
+    public int totalMetalSpent;
 }

@@ -8,10 +8,10 @@ public class BuildingProgress : MonoBehaviour
     private Sprite finishedSprite;
 
     private int turnsLeft;
-    public PlotManager.PlotData plotData { get; private set; }
+    public PlotData plotData { get; private set; }
     public int currentLevel { get; private set; }
     public bool isComplete { get; private set; }
-    public void Initialize(PlotManager.PlotData data, int turnsToBuild)
+    public void Initialize(PlotData data, int turnsToBuild)
     {
         plotData = data;
         currentLevel = data.Level;
@@ -41,5 +41,9 @@ public class BuildingProgress : MonoBehaviour
             spriteRenderer.sprite = finishedSprite;
         }
         isComplete = true;
+        if (plotData.PlotCategory == PlotManager.PlotCategory.Housing)
+        {
+            GameManager.Instance.AddPopulation(plotData.GainPopulation);
+        }
     }
 }

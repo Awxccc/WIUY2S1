@@ -6,34 +6,6 @@ public class PlotManager : MonoBehaviour
     public enum PlotCategory { General, Housing, Productivity, Recreational }
     public enum PlotBuildable { Land, Costal, Sea }
 
-    [System.Serializable]
-    public class PlotData
-    {
-        [Header("Plot Data Settings")]
-        public string PlotName;
-        public int Level = 1;
-        public Sprite PlotImage;
-        public GameObject BuildingPrefab;
-        public PlotCategory PlotCategory;
-        public PlotBuildable PlotBuildable;
-        public int AvailableBuildByTurn;
-        public int TurnsToBuild;
-        public int TileSizeWidth;
-        public int TileSizeHeight;
-        public int CostFunds;
-        public int CostWood;
-        public int CostStone;
-        public int CostMetal;
-        public int GainFunds;
-        public int GainWood;
-        public int GainStone;
-        public int GainPopulation;
-        public string Description = "";
-
-        [SerializeReference]
-        public PlotData[] Upgrades;
-    }
-
     [Header("Building Data Settings")]
     public PlotData[] BuildingPlots;
 

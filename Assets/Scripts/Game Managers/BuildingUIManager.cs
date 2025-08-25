@@ -15,6 +15,7 @@ public class BuildingUIManager : MonoBehaviour
 
     private string docks = "Dock_Building"; //exact name (dont change dock_building)
     public GameObject Tradingbtn;
+    public Trading trading;
 
     // Awake is called before the application starts
     void Awake()
@@ -70,9 +71,28 @@ public class BuildingUIManager : MonoBehaviour
         {
             UIBuildingViewer.SetActive(true);
 
-            if (selectedBuildingData.name == docks)
+            if (Tradingbtn != null)
             {
-                Tradingbtn.SetActive(true);
+                Tradingbtn.SetActive(false);
+            }
+
+            if (selectedBuilding.name == docks)
+            {
+                if (Tradingbtn != null)
+                {
+                    Tradingbtn.SetActive(true);
+                }
+
+                BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
+                if (bp != null && trading != null)
+                {
+                    trading.tradingSlots(bp.currentLevel);
+                }
+            }
+            // If the building is not a dock, ensure all extra slots are hidden
+            else if (trading != null)
+            {
+                trading.tradingSlots(0); // Pass 0 to hide all optional slots
             }
         }
         UpdateBuildingContent();
@@ -121,10 +141,10 @@ public class BuildingUIManager : MonoBehaviour
             return;
 
         BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
-        if (bp != null && bp.plotData != null && bp.plotData.Upgrades.Length > 0)
+        if (bp != null && bp.plotData != null && bp.plotData.Upgrades.Length > 0 && bp.plotData.Upgrades[0] != null)
         {
             // The cost is determined by the nextlevel's PlotData
-            PlotManager.PlotData nextLevelData = bp.plotData.Upgrades[0];
+            PlotData nextLevelData = bp.plotData.Upgrades[0];
 
             // Check for resources for the next level
             if (GameManager.Instance.HasEnoughFunds(nextLevelData.CostFunds) &&
@@ -146,13 +166,30 @@ public class BuildingUIManager : MonoBehaviour
         }
     }
 
-    // Destroy the selected building
+    // Demolish building and refund 50%
     public void DemolishSelectedBuilding()
     {
         if (selectedBuilding == null)
             return;
 
+        BuildingPosition pos = selectedBuilding.GetComponent<BuildingPosition>();
         BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
+
+        if (pos != null)
+        {
+            int fundsRefund = Mathf.CeilToInt(pos.totalFundsSpent / 2.0f);
+            int woodRefund = Mathf.CeilToInt(pos.totalWoodSpent / 2.0f);
+            int stoneRefund = Mathf.CeilToInt(pos.totalStoneSpent / 2.0f);
+            int metalRefund = Mathf.CeilToInt(pos.totalMetalSpent / 2.0f);
+
+            GameManager.Instance.AddFunds(fundsRefund);
+            GameManager.Instance.AddWood(woodRefund);
+            GameManager.Instance.AddStone(stoneRefund);
+            GameManager.Instance.AddMetal(metalRefund);
+
+            Debug.Log($"Demolished {selectedBuilding.name}. Refunded: {fundsRefund} Funds, {woodRefund} Wood, {stoneRefund} Stone, {metalRefund} Metal.");
+        }
+
         if (bp != null && bp.plotData != null && bp.plotData.PlotCategory == PlotManager.PlotCategory.Housing)
         {
             GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);

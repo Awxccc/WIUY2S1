@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
     public int CurrentTurn => currentTurn;
     public float CurrentTurnTime => currentTurnTime;
     public TurnCalculations turnCalculations;
+    public Trading trading;
 
     void Awake()
     {
@@ -95,6 +96,11 @@ public class GameManager : MonoBehaviour
     {
         currentTurn++;
         currentTurnTime = initialTurnTimeCount;
+
+        if (trading != null)
+        {
+            trading.gettradeamt();
+        }
 
         if (EventManager.Instance != null)
             EventManager.Instance.CheckForEvents();

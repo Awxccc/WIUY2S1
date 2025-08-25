@@ -2,7 +2,6 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using static Unity.Cinemachine.CinemachineOrbitalTransposer;
 
 public class UICoreScript : MonoBehaviour
 {
@@ -25,6 +24,7 @@ public class UICoreScript : MonoBehaviour
     public TextMeshProUGUI Cash1;
     public TextMeshProUGUI Cash2;
     public TextMeshProUGUI Cash3;
+    public TextMeshProUGUI quickBuildText;
     public Image MoodImage;
     public Sprite MoodGreat;
     public Sprite MoodGood;
@@ -137,6 +137,14 @@ public class UICoreScript : MonoBehaviour
             MoodImage.sprite = MoodGood;
         else
             MoodImage.sprite = MoodGreat;
+        if (isQuickBuildMode)
+        {
+            quickBuildText.text = "Quick Build ON";
+        }
+        else
+        {
+            quickBuildText.text = "Quick Build OFF";
+        }
     }
 
     // Toggles the plot grid viewer for world building
