@@ -2,10 +2,12 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using static Unity.Cinemachine.CinemachineOrbitalTransposer;
 
 public class UICoreScript : MonoBehaviour
 {
     [Header("UI References Settings")]
+    public Trading trading;
     public GameObject UIGameViewer;
     public GameObject UIPlotViewer;
     public GameObject UIWorldMap;
@@ -17,6 +19,12 @@ public class UICoreScript : MonoBehaviour
     public TextMeshProUGUI StoneText;
     public TextMeshProUGUI MetalText;
     public TextMeshProUGUI PopulationText;
+    public TextMeshProUGUI TradingStone;
+    public TextMeshProUGUI TradingMetal;
+    public TextMeshProUGUI TradingWood;
+    public TextMeshProUGUI Cash1;
+    public TextMeshProUGUI Cash2;
+    public TextMeshProUGUI Cash3;
     public Image MoodImage;
     public Sprite MoodGreat;
     public Sprite MoodGood;
@@ -108,6 +116,15 @@ public class UICoreScript : MonoBehaviour
         StoneText.text = GameManager.Instance.Stone.ToString();
         MetalText.text = GameManager.Instance.Metal.ToString();
         PopulationText.text = GameManager.Instance.Population.ToString();
+
+        //Update Trading Stats
+        TradingStone.text = trading.tradeamt1.ToString();
+        TradingMetal.text = trading.tradeamt2.ToString();
+        TradingWood.text = trading.tradeamt3.ToString();
+
+        Cash1.text = trading.basestoneprice.ToString();
+        Cash2.text = trading.basemetalprice.ToString();
+        Cash3.text = trading.basewoodprice.ToString();
 
         // Update Mood Image
         if (GameManager.Instance.Mood < 20)

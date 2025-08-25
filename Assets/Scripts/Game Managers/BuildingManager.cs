@@ -198,6 +198,11 @@ public class BuildingManager : MonoBehaviour
         position.height = selectedBuildingHeight;
         position.gridID = gridID;
 
+        if (selectedPlotData.PlotCategory == PlotManager.PlotCategory.Housing)
+        {
+            GameManager.Instance.AddPopulation(selectedPlotData.GainPopulation);
+        }
+
         // Restore construction progress system
         BuildingProgress bp = newBuilding.GetComponent<BuildingProgress>();
         if (bp != null)

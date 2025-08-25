@@ -13,6 +13,9 @@ public class BuildingUIManager : MonoBehaviour
     private BuildingPosition selectedBuildingData;
     private GameObject selectedBuilding;
 
+    private string docks = "Dock_Building"; //exact name (dont change dock_building)
+    public GameObject Tradingbtn;
+
     // Awake is called before the application starts
     void Awake()
     {
@@ -64,8 +67,14 @@ public class BuildingUIManager : MonoBehaviour
         selectedBuildingData = buildingData;
 
         if (UIBuildingViewer != null)
+        {
             UIBuildingViewer.SetActive(true);
 
+            if (selectedBuildingData.name == docks)
+            {
+                Tradingbtn.SetActive(true);
+            }
+        }
         UpdateBuildingContent();
     }
 
@@ -73,8 +82,10 @@ public class BuildingUIManager : MonoBehaviour
     public void HideBuildingInfo()
     {
         if (UIBuildingViewer != null)
+        {
             UIBuildingViewer.SetActive(false);
-
+            Tradingbtn.SetActive(false);
+        }
         selectedBuilding = null;
         selectedBuildingData = null;
     }
@@ -140,6 +151,12 @@ public class BuildingUIManager : MonoBehaviour
     {
         if (selectedBuilding == null)
             return;
+
+        BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
+        if (bp != null && bp.plotData != null && bp.plotData.PlotCategory == PlotManager.PlotCategory.Housing)
+        {
+            GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);
+        }
 
         Destroy(selectedBuilding);
         HideBuildingInfo();

@@ -1,20 +1,24 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class EventManager : MonoBehaviour
 {
-    [System.Serializable]
-    public class EventData
-    {
-        [Header("Event Data Settings")]
-        public string EventName;
-        public int EventChance;
-        public int MinTurnTrigger;
-        public int MaxTurnTrigger;
-    }
-
     [Header("Event Manager Settings")]
     public static EventManager Instance;
-    public EventData[] allEvents;
+    public RandomEvents[] randomEventsList;
+
+    [Header("UI Event References")]
+    public GameObject UIEventViewer;
+    public TextMeshProUGUI EventNameText;
+    public TextMeshProUGUI EventInfoText;
+    public Button OptionOneBtn;
+    public Button OptionTwoBtn;
+    public Button CloseBtn;
+    public TextMeshProUGUI OptionOneBtnText;
+    public TextMeshProUGUI OptionTwoBtnText;
+
+    private RandomEvents currentActiveEvent;
 
     // Awake is called before the application starts
     void Awake()
@@ -30,13 +34,8 @@ public class EventManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        // Hide the 'UI-EventViewer' on load
+        UIEventViewer.SetActive(false);
     }
 
     // Check for random events every turn
@@ -47,32 +46,64 @@ public class EventManager : MonoBehaviour
         int currentTurn = GameManager.Instance.CurrentTurn;
 
         // Go through each event and check if it should trigger
-        foreach (EventData eventData in allEvents)
-        {
+        foreach (RandomEvents eventData in randomEventsList)
             CheckEventToTrigger(eventData, currentTurn);
-        }
     }
 
     // Go through the selected event to determine if it can be triggered
-    void CheckEventToTrigger(EventData eventData, int currentTurn)
+    void CheckEventToTrigger(RandomEvents eventData, int currentTurn)
     {
-        // Check to see if the event is within the mix and max range of turns to be allowed to trigger
-        if (currentTurn < eventData.MinTurnTrigger || currentTurn > eventData.MaxTurnTrigger)
-        {
+        // Check to see if the event is within the min and max range of turns
+        if (currentTurn < eventData.minTurnTrigger || currentTurn > eventData.maxTurnTrigger)
             return;
-        }
 
         // If the roll succeeds, the event will be triggered
-        if (Random.Range(1, eventData.EventChance + 1) == 1)
-        {
+        if (Random.Range(1, eventData.eventChance + 1) == 1)
             TriggerEvent(eventData);
-        }
     }
 
     // Trigger the selected event
-    void TriggerEvent(EventData eventData)
+    void TriggerEvent(RandomEvents eventData)
     {
-        Debug.Log($"{eventData.EventName} has been triggered!");
+        // Store current active event & update the UI with event data
+        currentActiveEvent = eventData;
+        EventNameText.text = eventData.eventName;
+        EventInfoText.text = eventData.eventDescription;
+        OptionOneBtnText.text = eventData.option1Text;
+        OptionTwoBtnText.text = eventData.option2Text;
+        UIEventViewer.SetActive(true);
+
+        // Check if we have choices to display or not and also toggle the closeBtn accordingly
+        bool hasChoices = eventData.HasPlayerChoices();
+        OptionOneBtn.gameObject.SetActive(!string.IsNullOrEmpty(eventData.option1Text));
+        OptionTwoBtn.gameObject.SetActive(!string.IsNullOrEmpty(eventData.option2Text));
+        CloseBtn.gameObject.SetActive(!hasChoices);
+
+        // If the event has no player choice, execute no-choice effects immediately
+        if (!hasChoices)
+            eventData.TriggerNoChoice();
+
+        Debug.Log($"{eventData.eventName} has been triggered!");
+    }
+
+    // Handle the option button clicks when an event with options is shown
+    public void OnOptionButtonClicked(int buttonNumber)
+    {
+        if (currentActiveEvent == null) return;
+
+        if (buttonNumber == 1)
+            currentActiveEvent.TriggerOption1();
+        else if (buttonNumber == 2)
+            currentActiveEvent.TriggerOption2();
+
+        CloseEventUI();
+    }
+
+    // Close the event UI
+    public void CloseEventUI()
+    {
+        UIEventViewer.SetActive(false);
+        currentActiveEvent = null;
     }
 
     // Force the manager to roll another event to trigger

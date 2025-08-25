@@ -24,7 +24,13 @@ public class PlotManager : MonoBehaviour
         public int CostWood;
         public int CostStone;
         public int CostMetal;
+        public int GainFunds;
+        public int GainWood;
+        public int GainStone;
+        public int GainPopulation;
         public string Description = "";
+
+        [SerializeReference]
         public PlotData[] Upgrades;
     }
 

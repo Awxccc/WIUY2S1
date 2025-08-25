@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     public int CurrentTurn => currentTurn;
     public float CurrentTurnTime => currentTurnTime;
+    public TurnCalculations turnCalculations;
 
     void Awake()
     {
@@ -99,6 +100,19 @@ public class GameManager : MonoBehaviour
             EventManager.Instance.CheckForEvents();
 
         BuildingProgress[] buildings = FindObjectsByType<BuildingProgress>(FindObjectsSortMode.None);
+
+        if (turnCalculations != null)
+        {
+            foreach (var building in buildings)
+            {
+                if (building.plotData != null && building.isComplete)
+                {
+                    turnCalculations.AddBuildingGains(building.plotData.GainFunds, building.plotData.GainWood, building.plotData.GainStone, 0);
+                }
+            }
+            turnCalculations.updateall();
+            turnCalculations.turnend();
+        }
         foreach (var b in buildings)
         {
             b.BuildTurn();

@@ -10,13 +10,14 @@ public class BuildingProgress : MonoBehaviour
     private int turnsLeft;
     public PlotManager.PlotData plotData { get; private set; }
     public int currentLevel { get; private set; }
+    public bool isComplete { get; private set; }
     public void Initialize(PlotManager.PlotData data, int turnsToBuild)
     {
         plotData = data;
         currentLevel = data.Level;
         finishedSprite = data.PlotImage;
         turnsLeft = turnsToBuild;
-
+        isComplete = false;
         if (spriteRenderer != null && constructionSprite != null)
             spriteRenderer.sprite = constructionSprite;
     }
@@ -39,5 +40,6 @@ public class BuildingProgress : MonoBehaviour
         {
             spriteRenderer.sprite = finishedSprite;
         }
+        isComplete = true;
     }
 }
