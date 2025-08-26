@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     public List<BuildingProgress> allBuildings = new();
 
     public int CurrentTurn => currentTurn;
+    public int MaximumTurn => maximumTurn;
     public float CurrentTurnTime => currentTurnTime;
     public TurnCalculations turnCalculations;
     public Trading trading;

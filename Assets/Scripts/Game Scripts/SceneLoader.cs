@@ -1,7 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
-using System.Collections;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -56,9 +56,9 @@ public class SceneLoader : MonoBehaviour
     {
         Debug.Log("Quitting Game");
         Application.Quit();
-    #if UNITY_EDITOR
+#if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-    #endif
+#endif
     }
 
     private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
