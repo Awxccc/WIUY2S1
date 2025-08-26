@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using System.Collections;
 
 public class SceneLoader : MonoBehaviour
 {
@@ -10,19 +11,29 @@ public class SceneLoader : MonoBehaviour
 
     private void Start()
     {
-        var pauseAction = InputSystem.actions.FindAction("Pause");
-        pauseAction.started += ctx =>
+        Scene currentScene = SceneManager.GetActiveScene();
+        string sceneName = currentScene.name;
+        if (sceneName == "GameScene")
         {
-            if(isPaused)
-                ResumeGame();
-            else
-                PauseGame();
-        };
+            var pauseAction = InputSystem.actions.FindAction("Pause");
+            pauseAction.started += ctx =>
+            {
+                if (isPaused)
+                    ResumeGame();
+                else
+                    PauseGame();
+            };
+        }
     }
 
     public void LoadScene(string sceneName)
     {
-        SceneManager.LoadScene(sceneName);
+        StartCoroutine(LoadSceneAfterDelay(sceneName, 5f));
+    }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MenuScene");
     }
 
     public void PauseGame()
@@ -43,13 +54,16 @@ public class SceneLoader : MonoBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("Quitting Game...");
+        Debug.Log("Quitting Game");
         Application.Quit();
-
-#if UNITY_EDITOR
+    #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
-#endif
+    #endif
+    }
 
+    private IEnumerator LoadSceneAfterDelay(string sceneName, float delay)
+    {
+        yield return new WaitForSecondsRealtime(delay);
+        SceneManager.LoadScene(sceneName);
     }
 }
-

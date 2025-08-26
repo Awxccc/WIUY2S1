@@ -197,7 +197,16 @@ public class BuildingManager : MonoBehaviour
 
         GameObject gridTemplate = GameObject.Find(gridID);
         if (gridTemplate != null)
-            newBuilding.transform.SetParent(gridTemplate.transform.parent ?? gridTemplate.transform);
+        {
+            if (gridTemplate.transform.parent != null)
+            {
+                newBuilding.transform.SetParent(gridTemplate.transform.parent);
+            }
+            else
+            {
+                newBuilding.transform.SetParent(gridTemplate.transform);
+            }
+        }
         else
             Debug.LogWarning($"Could not find grid: {gridID}");
 
@@ -212,10 +221,11 @@ public class BuildingManager : MonoBehaviour
         position.totalStoneSpent = stone;
         position.totalMetalSpent = metal;
 
-        BuildingProgress bp = newBuilding.GetComponent<BuildingProgress>();
-        if (bp != null)
+        if (newBuilding.TryGetComponent<BuildingProgress>(out var bp))
+        {
             bp.Initialize(plotData, selectedPlotData.TurnsToBuild);
-
+            GameManager.Instance.allBuildings.Add(bp);
+        }
         return true;
     }
     //Check tile type
@@ -233,8 +243,7 @@ public class BuildingManager : MonoBehaviour
     {
         GameObject gridTemplate = GameObject.Find(gridID);
         if (gridTemplate == null) return false;
-        GridTemplateScript grid = gridTemplate.GetComponent<GridTemplateScript>();
-        if (grid == null) return false;
+        if (!gridTemplate.TryGetComponent<GridTemplateScript>(out var grid)) return false;
 
         return plotData.TileSizeWidth <= grid.templateWidth && plotData.TileSizeHeight <= grid.templateHeight;
     }
@@ -243,8 +252,7 @@ public class BuildingManager : MonoBehaviour
     {
         GameObject gridTemplate = GameObject.Find(gridID);
         if (gridTemplate == null) return -1;
-        GridTemplateScript grid = gridTemplate.GetComponent<GridTemplateScript>();
-        if (grid == null) return -1;
+        if (!gridTemplate.TryGetComponent<GridTemplateScript>(out var grid)) return -1;
 
         int maxValidX = grid.templateWidth - plotData.TileSizeWidth;
         for (int testX = Mathf.Min(clickedX, maxValidX); testX >= 0; testX--)
@@ -311,6 +319,9 @@ public class BuildingManager : MonoBehaviour
             GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);
         }
 
+        // Remove old building from the list
+        GameManager.Instance.allBuildings.Remove(bp);
+
         // Instantiate the new building
         GameObject newBuilding = Instantiate(upgradeData.BuildingPrefab, buildingToUpgrade.transform.position, Quaternion.identity);
         newBuilding.name = upgradeData.PlotName + "_Building";
@@ -324,10 +335,10 @@ public class BuildingManager : MonoBehaviour
         newPos.height = pos.height;
         newPos.gridID = pos.gridID;
 
-        BuildingProgress newBp = newBuilding.GetComponent<BuildingProgress>();
-        if (newBp != null)
+        if (newBuilding.TryGetComponent<BuildingProgress>(out var newBp))
         {
             newBp.Initialize(upgradeData, upgradeData.TurnsToBuild);
+            GameManager.Instance.allBuildings.Add(newBp);
         }
         if (pos != null)
         {

@@ -5,8 +5,9 @@ using UnityEngine;
 public class NPCManager : MonoBehaviour
 {
     public GameObject npcBasePrefab;
-    public List<HumanSprites> possibleNpcAppearances = new List<HumanSprites>();
-    public List<Transform> npcContainers = new List<Transform>();
+    public List<HumanSprites> possibleNpcAppearances = new();
+    public List<Transform> npcContainers = new();
+    public List<Transform> animalContainers = new();
 
     public GameObject animalBasePrefab;
     public List<AnimalSprites> possibleAnimalAppearances;
@@ -19,8 +20,8 @@ public class NPCManager : MonoBehaviour
     public float maxX = 50f;
     public float spawnY = 30f;
 
-    private List<NPCController> activeNpcs = new List<NPCController>();
-    private List<GameObject> activeAnimals = new List<GameObject>();
+    private List<NPCController> activeNpcs = new();
+    private List<GameObject> activeAnimals = new();
 
     private int currentPopulation = 0;
     private HumanSprites.Era lastCheckedEra;
@@ -31,12 +32,22 @@ public class NPCManager : MonoBehaviour
     private bool initialNpcSpawnDone = false;
     private bool initialAnimalSpawnDone = false;
     private bool isInitialized = false;
+    private Dictionary<Transform, bool> animalContainerStates = new();
+
+    void Start()
+    {
+        foreach (var container in animalContainers)
+        {
+            animalContainerStates[container] = container.gameObject.activeInHierarchy;
+        }
+    }
+
 
     void Update()
     {
         if (GameManager.Instance == null) return;
 
-        if (!initialNpcSpawnDone || !initialAnimalSpawnDone)
+        if (!isInitialized)
         {
             if (FindGroundPosition() != null)
             {
@@ -49,13 +60,7 @@ public class NPCManager : MonoBehaviour
 
         int currentTurn = GameManager.Instance.CurrentTurn;
 
-        if (GameManager.Instance.Population > currentPopulation)
-        {
-            int populationDifference = GameManager.Instance.Population - currentPopulation;
-            for (int i = 0; i < populationDifference; i++) SpawnNpc();
-            currentPopulation = GameManager.Instance.Population;
-        }
-
+        //Update NPC based on Era
         HumanSprites.Era currentEra = GetCurrentEra(currentTurn);
         if (currentEra != lastCheckedEra)
         {
@@ -68,18 +73,16 @@ public class NPCManager : MonoBehaviour
             animalDespawningActive = true;
         }
 
-        if (animalDespawningActive && currentTurn > lastTurnAnimalDespawned)
-        {
-            lastTurnAnimalDespawned = currentTurn;
-            DespawnOneAnimal();
-        }
+        ManageAnimalPopulation();
+
+        currentPopulation = GameManager.Instance.Population;
+        ManageHumanNpcPopulation();
     }
 
     private void TryInitialNpcSpawn()
     {
         currentPopulation = GameManager.Instance.Population;
-        for (int i = 0; i < currentPopulation; i++) SpawnNpc();
-
+        ManageHumanNpcPopulation();
         lastCheckedEra = GetCurrentEra(GameManager.Instance.CurrentTurn);
         initialNpcSpawnDone = true;
         CheckInitialization();
@@ -87,10 +90,25 @@ public class NPCManager : MonoBehaviour
 
     private void SpawnInitialAnimals()
     {
-        for (int i = 0; i < initialAnimalCount; i++) SpawnAnimal();
+        var activeContainers = animalContainers.Where(c => c.gameObject.activeInHierarchy).ToList();
+        if (activeContainers.Count == 0)
+        {
+            initialAnimalSpawnDone = true;
+            CheckInitialization();
+            return;
+        }
+
+        int containerIndex = 0;
+        for (int i = 0; i < initialAnimalCount; i++)
+        {
+            SpawnAnimal(activeContainers[containerIndex]);
+            containerIndex = (containerIndex + 1) % activeContainers.Count;
+        }
+
         initialAnimalSpawnDone = true;
         CheckInitialization();
     }
+
 
     private void CheckInitialization()
     {
@@ -99,9 +117,46 @@ public class NPCManager : MonoBehaviour
             isInitialized = true;
         }
     }
-    private void SpawnNpc()
+
+    private void ManageHumanNpcPopulation()
     {
-        if (npcBasePrefab == null || npcContainers.Count == 0 || possibleNpcAppearances.Count == 0) return;
+        foreach (var container in npcContainers)
+        {
+            var npcsInContainer = container.GetComponentsInChildren<NPCController>().ToList();
+
+            if (container.gameObject.activeInHierarchy)
+            {
+                int desiredNpcCount = Mathf.CeilToInt(currentPopulation / 4.0f);
+
+                while (npcsInContainer.Count < desiredNpcCount)
+                {
+                    SpawnNpc(container);
+                    npcsInContainer = container.GetComponentsInChildren<NPCController>().ToList();
+                }
+
+                // If we have more than desired, despawn the excess
+                while (npcsInContainer.Count > desiredNpcCount)
+                {
+                    var npcToDespawn = npcsInContainer.Last();
+                    activeNpcs.Remove(npcToDespawn);
+                    Destroy(npcToDespawn.gameObject);
+                    npcsInContainer.Remove(npcToDespawn);
+                }
+            }
+            else
+            {
+                foreach (var npc in npcsInContainer)
+                {
+                    activeNpcs.Remove(npc);
+                    Destroy(npc.gameObject);
+                }
+            }
+        }
+    }
+
+    private void SpawnNpc(Transform parentContainer)
+    {
+        if (npcBasePrefab == null || possibleNpcAppearances.Count == 0) return;
         Vector2? groundPos = FindGroundPosition();
         if (groundPos.HasValue)
         {
@@ -110,10 +165,9 @@ public class NPCManager : MonoBehaviour
             if (eraAppearances.Count == 0) return;
 
             HumanSprites chosenAppearance = eraAppearances[Random.Range(0, eraAppearances.Count)];
-            GameObject newNpcObject = Instantiate(npcBasePrefab, groundPos.Value, Quaternion.identity);
+            GameObject newNpcObject = Instantiate(npcBasePrefab, groundPos.Value, Quaternion.identity, parentContainer);
 
-            NPCController npcController = newNpcObject.GetComponent<NPCController>();
-            if (npcController != null)
+            if (newNpcObject.TryGetComponent<NPCController>(out var npcController))
             {
                 npcController.SetAppearance(chosenAppearance);
                 activeNpcs.Add(npcController);
@@ -125,8 +179,6 @@ public class NPCManager : MonoBehaviour
                 float halfHeight = sr.bounds.extents.y;
                 newNpcObject.transform.position = new Vector2(groundPos.Value.x, groundPos.Value.y + halfHeight);
             }
-
-            newNpcObject.transform.SetParent(npcContainers[Random.Range(0, npcContainers.Count)]);
         }
     }
 
@@ -145,15 +197,61 @@ public class NPCManager : MonoBehaviour
         activeNpcs.RemoveAll(item => item == null);
     }
 
-    // --- ANIMAL METHODS ---
-    private void SpawnAnimal()
+    //ANIMAL METHODS
+
+    private void ManageAnimalPopulation()
     {
-        if (animalBasePrefab == null || npcContainers.Count == 0 || possibleAnimalAppearances.Count == 0) return;
+        activeAnimals.RemoveAll(item => item == null);
+
+        foreach (var container in animalContainers)
+        {
+            bool wasActive = animalContainerStates.ContainsKey(container) && animalContainerStates[container];
+            bool isActive = container.gameObject.activeInHierarchy;
+
+            if (wasActive && !isActive)
+            {
+                //Container become inactive and despawn animals
+                var animalsInContainer = container.GetComponentsInChildren<Transform>()
+                    .Where(t => t.parent == container && activeAnimals.Contains(t.gameObject))
+                    .Select(t => t.gameObject)
+                    .ToList();
+
+                foreach (var animal in animalsInContainer)
+                {
+                    activeAnimals.Remove(animal);
+                    Destroy(animal);
+                }
+            }
+            else if (!wasActive && isActive)
+            {
+                //Container become active and respawn animals
+                int animalsToSpawn = initialAnimalCount / animalContainers.Count(c => c.gameObject.activeInHierarchy);
+                for (int i = 0; i < animalsToSpawn; i++)
+                {
+                    SpawnAnimal(container);
+                }
+            }
+
+            animalContainerStates[container] = isActive;
+        }
+
+        if (animalDespawningActive && GameManager.Instance.CurrentTurn > lastTurnAnimalDespawned && activeAnimals.Count > minimumAnimalCount)
+        {
+            lastTurnAnimalDespawned = GameManager.Instance.CurrentTurn;
+            DespawnOneAnimal();
+        }
+    }
+
+
+    private void SpawnAnimal(Transform parentContainer)
+    {
+        if (animalBasePrefab == null || possibleAnimalAppearances.Count == 0) return;
         Vector2? groundPos = FindGroundPosition();
         if (groundPos.HasValue)
         {
             AnimalSprites chosenAppearance = possibleAnimalAppearances[Random.Range(0, possibleAnimalAppearances.Count)];
-            GameObject newAnimalObject = Instantiate(animalBasePrefab, groundPos.Value, Quaternion.identity);
+
+            GameObject newAnimalObject = Instantiate(animalBasePrefab, groundPos.Value, Quaternion.identity, parentContainer);
 
             var sr = newAnimalObject.GetComponentInChildren<SpriteRenderer>();
             var anim = newAnimalObject.GetComponentInChildren<Animator>();
@@ -166,7 +264,6 @@ public class NPCManager : MonoBehaviour
                 newAnimalObject.transform.position = new Vector2(groundPos.Value.x, groundPos.Value.y + halfHeight);
             }
 
-            newAnimalObject.transform.SetParent(npcContainers[Random.Range(0, npcContainers.Count)]);
             activeAnimals.Add(newAnimalObject);
         }
     }
@@ -176,8 +273,8 @@ public class NPCManager : MonoBehaviour
         activeAnimals.RemoveAll(item => item == null);
         if (activeAnimals.Count > minimumAnimalCount)
         {
-            GameObject animalToDespawn = activeAnimals[0];
-            activeAnimals.RemoveAt(0);
+            GameObject animalToDespawn = activeAnimals[Random.Range(0, activeAnimals.Count)];
+            activeAnimals.Remove(animalToDespawn);
             Destroy(animalToDespawn);
         }
     }
@@ -192,7 +289,7 @@ public class NPCManager : MonoBehaviour
     private Vector2? FindGroundPosition()
     {
         float randomX = Random.Range(minX, maxX);
-        Vector2 raycastStart = new Vector2(randomX, spawnY);
+        Vector2 raycastStart = new(randomX, spawnY);
         RaycastHit2D hit = Physics2D.Raycast(raycastStart, Vector2.down, 100f, groundLayer);
         return hit.collider != null ? (Vector2?)hit.point : null;
     }

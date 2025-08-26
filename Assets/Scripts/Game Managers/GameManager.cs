@@ -1,3 +1,4 @@
+using System.Collections.Generic; // Add this line
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -15,6 +16,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] private int maximumTurn;
     [SerializeField] private float currentTurnTime;
     [SerializeField] private float initialTurnTimeCount;
+
+    // Add this list to track all buildings
+    public List<BuildingProgress> allBuildings = new();
 
     public int CurrentTurn => currentTurn;
     public float CurrentTurnTime => currentTurnTime;
@@ -105,13 +109,11 @@ public class GameManager : MonoBehaviour
         if (EventManager.Instance != null)
             EventManager.Instance.CheckForEvents();
 
-        BuildingProgress[] buildings = FindObjectsByType<BuildingProgress>(FindObjectsSortMode.None);
-
         if (turnCalculations != null)
         {
-            foreach (var building in buildings)
+            foreach (var building in allBuildings)
             {
-                if (building.plotData != null && building.isComplete)
+                if (building != null && building.plotData != null && building.isComplete)
                 {
                     turnCalculations.AddBuildingGains(building.plotData.GainFunds, building.plotData.GainWood, building.plotData.GainStone, 0);
                 }
@@ -119,9 +121,13 @@ public class GameManager : MonoBehaviour
             turnCalculations.updateall();
             turnCalculations.turnend();
         }
-        foreach (var b in buildings)
+
+        foreach (var b in allBuildings)
         {
-            b.BuildTurn();
+            if (b != null)
+            {
+                b.BuildTurn();
+            }
         }
     }
 

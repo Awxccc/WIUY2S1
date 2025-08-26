@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Trading : MonoBehaviour
 {
-    public int mutliplier = 2;
+    public int multiplier = 2;
     public int basewoodprice = 3;
     public int basestoneprice = 5;
     public int basemetalprice = 5;
@@ -20,6 +20,8 @@ public class Trading : MonoBehaviour
     public int tradeamt1, tradeamt2, tradeamt3;
     public GameObject Slot2, Slot3;
     public GameManager gameManager;
+
+    private int prevlvl;
 
     void Start()
     {
@@ -79,10 +81,14 @@ public class Trading : MonoBehaviour
     //call upon upgrading docks
     public void tradingSlots(int currentlvl)
     {
-        baseminsold *= mutliplier;
-        basemaxsold *= mutliplier;
+        if (currentlvl != prevlvl)
+        {
+            baseminsold *= multiplier;
+            basemaxsold *= multiplier;
+        }
 
-        if (currentlvl >= 2 && currentlvl < 4)
+
+        if (currentlvl >= 2)
         {
             Slot2.SetActive(true);
         }
@@ -99,5 +105,7 @@ public class Trading : MonoBehaviour
         {
             Slot3.SetActive(false);
         }
+
+        prevlvl = currentlvl;
     }
 }

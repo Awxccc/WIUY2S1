@@ -14,21 +14,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PlotName: Dock
   Level: 3
-  PlotImage: {fileID: -855298285791758126, guid: 7e6943c51cc1d7d4c9dd1c099b9d9495, type: 3}
+  PlotImage: {fileID: 21300000, guid: 3c0da00470b78804f8f76efc8505e38b, type: 3}
   BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
   PlotCategory: 2
-  PlotBuildable: 0
-  AvailableBuildByTurn: 0
-  TurnsToBuild: 2
-  TileSizeWidth: 3
-  TileSizeHeight: 3
-  CostFunds: 3
-  CostWood: 3
-  CostStone: 0
+  PlotBuildable: 1
+  AvailableBuildByTurn: 6
+  TurnsToBuild: 4
+  TileSizeWidth: 6
+  TileSizeHeight: 4
+  CostFunds: 45
+  CostWood: 25
+  CostStone: 30
   CostMetal: 0
   GainFunds: 0
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: 
-  Upgrades: []
+  Description: More resource amounts
+  Upgrades:
+  - {fileID: 11400000, guid: 37f09429e4e59df4f88e0592081cbf83, type: 2}

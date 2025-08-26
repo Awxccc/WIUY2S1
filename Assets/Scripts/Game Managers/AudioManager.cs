@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AudioManager : MonoBehaviour
 {
@@ -9,6 +10,11 @@ public class AudioManager : MonoBehaviour
     public AudioClip[] era2Music;
     public AudioClip[] era3Music;
     [Range(0f, 1f)] public float musicVolume;
+
+    [Header("Sound Effects Settings")]
+    public AudioSource sfxSource;
+    public AudioClip[] SFXArray;
+    public Button[] buttonsToPlaySFX;
 
     private bool hasFocus = true;
     private int currentEra = 1, songIndex = 0;
@@ -31,6 +37,16 @@ public class AudioManager : MonoBehaviour
         musicSource.loop = false;
         musicSource.volume = musicVolume;
         PlayCurrentBGM();
+
+        // Add Sound Listener
+        for (int i = 0; i < buttonsToPlaySFX.Length; i++)
+        {
+            if (buttonsToPlaySFX[i] != null)
+            {
+                int buttonIndex = i;
+                buttonsToPlaySFX[i].onClick.AddListener(() => PlayButtonSound(buttonIndex));
+            }
+        }
     }
 
     // Update is called once per frame
@@ -101,6 +117,14 @@ public class AudioManager : MonoBehaviour
         if (turn <= 40) return 1;
         if (turn <= 80) return 2;
         return 3;
+    }
+
+    void PlayButtonSound(int buttonIndex)
+    {
+        if (buttonIndex < SFXArray.Length && SFXArray[buttonIndex] != null)
+        {
+            sfxSource.PlayOneShot(SFXArray[buttonIndex]);
+        }
     }
 
     AudioClip[] GetCurrentBGM()

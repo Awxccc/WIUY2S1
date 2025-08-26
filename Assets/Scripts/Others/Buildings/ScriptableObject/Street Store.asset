@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81853133c259fe8478bc94c2ac5b78d2, type: 3}
+  m_Name: Street Store
+  m_EditorClassIdentifier: 
+  PlotName: Street Store
+  Level: 1
+  PlotImage: {fileID: 21300000, guid: 512c270064d5f3d4084647a611d18e08, type: 3}
+  BuildingPrefab: {fileID: 2517192324334922191, guid: c37b956548dac134198d34806450969b, type: 3}
+  PlotCategory: 2
+  PlotBuildable: 0
+  AvailableBuildByTurn: 6
+  TurnsToBuild: 1
+  TileSizeWidth: 2
+  TileSizeHeight: 1
+  CostFunds: 10
+  CostWood: 2
+  CostStone: 1
+  CostMetal: 0
+  GainFunds: 4
+  GainWood: 0
+  GainStone: 0
+  GainPopulation: 0
+  Description: 
+  Upgrades: []

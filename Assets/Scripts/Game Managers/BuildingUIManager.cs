@@ -51,8 +51,7 @@ public class BuildingUIManager : MonoBehaviour
 
             foreach (RaycastHit2D hit in hits)
             {
-                BuildingClick buildingClick = hit.collider.GetComponent<BuildingClick>();
-                if (buildingClick != null)
+                if (hit.collider.TryGetComponent<BuildingClick>(out var buildingClick))
                 {
                     buildingClick.HandleClick();
                     return;
@@ -114,8 +113,7 @@ public class BuildingUIManager : MonoBehaviour
     void UpdateBuildingContent()
     {
         if (selectedBuildingData == null) return;
-        BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
-        if (bp == null) return;
+        if (!selectedBuilding.TryGetComponent<BuildingProgress>(out var bp)) return;
 
         // Show the building name and level on the UI
         if (BuildingNameText != null)
@@ -190,10 +188,16 @@ public class BuildingUIManager : MonoBehaviour
             Debug.Log($"Demolished {selectedBuilding.name}. Refunded: {fundsRefund} Funds, {woodRefund} Wood, {stoneRefund} Stone, {metalRefund} Metal.");
         }
 
-        if (bp != null && bp.plotData != null && bp.plotData.PlotCategory == PlotManager.PlotCategory.Housing)
+        if (bp != null)
         {
-            GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);
+            if (bp.plotData != null && bp.plotData.PlotCategory == PlotManager.PlotCategory.Housing)
+            {
+                GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);
+            }
+            // Remove the building from the GameManager's list
+            GameManager.Instance.allBuildings.Remove(bp);
         }
+
 
         Destroy(selectedBuilding);
         HideBuildingInfo();
