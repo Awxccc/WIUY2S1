@@ -291,13 +291,13 @@ public class BuildingManager : MonoBehaviour
     public void UpgradeBuilding(GameObject buildingToUpgrade)
     {
         BuildingProgress bp = buildingToUpgrade.GetComponent<BuildingProgress>();
-        if (bp == null || bp.plotData == null || bp.plotData.Upgrades.Length == 0)
+        if (bp == null || bp.PlotData == null || bp.PlotData.Upgrades.Length == 0)
         {
             Debug.Log("This building cannot be upgraded.");
             return;
         }
 
-        PlotData upgradeData = bp.plotData.Upgrades[0];
+        PlotData upgradeData = bp.PlotData.Upgrades[0];
         BuildingPosition pos = buildingToUpgrade.GetComponent<BuildingPosition>();
 
         if (!GameManager.Instance.HasEnoughFunds(upgradeData.CostFunds) ||
@@ -314,9 +314,9 @@ public class BuildingManager : MonoBehaviour
         GameManager.Instance.RemoveStone(upgradeData.CostStone);
         GameManager.Instance.RemoveMetal(upgradeData.CostMetal);
 
-        if (bp.plotData.PlotCategory == PlotManager.PlotCategory.Housing)
+        if (bp.PlotData.PlotCategory == PlotManager.PlotCategory.Housing)
         {
-            GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);
+            GameManager.Instance.RemovePopulation(bp.PlotData.GainPopulation);
         }
 
         // Remove old building from the list

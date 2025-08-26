@@ -66,35 +66,50 @@ public class BuildingUIManager : MonoBehaviour
         selectedBuilding = building;
         selectedBuildingData = buildingData;
 
+        BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
+
         if (UIBuildingViewer != null)
         {
             UIBuildingViewer.SetActive(true);
 
-            if (Tradingbtn != null)
+            if (bp != null && !bp.IsComplete)
             {
-                Tradingbtn.SetActive(false);
+                // Show construction progress
+                BuildingNameText.text = $"{selectedBuilding.name.Replace("_Building", "")} (Under Construction)";
+                BuildingInfoText.gameObject.SetActive(false);
+                if (Tradingbtn != null) Tradingbtn.SetActive(false);
             }
-
-            if (selectedBuilding.name == docks)
+            else
             {
+                // Show normal building info
+                BuildingInfoText.gameObject.SetActive(true);
+                UpdateBuildingContent();
+
                 if (Tradingbtn != null)
                 {
-                    Tradingbtn.SetActive(true);
+                    Tradingbtn.SetActive(false);
                 }
 
-                BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
-                if (bp != null && trading != null)
+                if (selectedBuilding.name == docks)
                 {
-                    trading.tradingSlots(bp.currentLevel);
+                    if (Tradingbtn != null)
+                    {
+                        Tradingbtn.SetActive(true);
+                    }
+
+                    if (bp != null && trading != null)
+                    {
+                        trading.tradingSlots(bp.CurrentLevel);
+                    }
+                }
+                // If the building is not a dock, ensure all extra slots are hidden
+                else if (trading != null)
+                {
+                    trading.tradingSlots(0); // Pass 0 to hide all optional slots
                 }
             }
-            // If the building is not a dock, ensure all extra slots are hidden
-            else if (trading != null)
-            {
-                trading.tradingSlots(0); // Pass 0 to hide all optional slots
-            }
+            UpdateBuildingContent();
         }
-        UpdateBuildingContent();
     }
 
     // Hide the 'UI-BuildingViewer'
@@ -119,7 +134,7 @@ public class BuildingUIManager : MonoBehaviour
         if (BuildingNameText != null)
         {
             string buildingName = selectedBuilding.name.Replace("_Building", "");
-            BuildingNameText.text = $"{buildingName} - Level {bp.currentLevel}";
+            BuildingNameText.text = $"{buildingName} - Level {bp.CurrentLevel}";
         }
 
         // Show building details on the UI
@@ -139,10 +154,10 @@ public class BuildingUIManager : MonoBehaviour
             return;
 
         BuildingProgress bp = selectedBuilding.GetComponent<BuildingProgress>();
-        if (bp != null && bp.plotData != null && bp.plotData.Upgrades.Length > 0 && bp.plotData.Upgrades[0] != null)
+        if (bp != null && bp.PlotData != null && bp.PlotData.Upgrades.Length > 0 && bp.PlotData.Upgrades[0] != null)
         {
             // The cost is determined by the nextlevel's PlotData
-            PlotData nextLevelData = bp.plotData.Upgrades[0];
+            PlotData nextLevelData = bp.PlotData.Upgrades[0];
 
             // Check for resources for the next level
             if (GameManager.Instance.HasEnoughFunds(nextLevelData.CostFunds) &&
@@ -190,9 +205,9 @@ public class BuildingUIManager : MonoBehaviour
 
         if (bp != null)
         {
-            if (bp.plotData != null && bp.plotData.PlotCategory == PlotManager.PlotCategory.Housing)
+            if (bp.PlotData != null && bp.PlotData.PlotCategory == PlotManager.PlotCategory.Housing)
             {
-                GameManager.Instance.RemovePopulation(bp.plotData.GainPopulation);
+                GameManager.Instance.RemovePopulation(bp.PlotData.GainPopulation);
             }
             // Remove the building from the GameManager's list
             GameManager.Instance.allBuildings.Remove(bp);

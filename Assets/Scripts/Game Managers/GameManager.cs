@@ -113,9 +113,9 @@ public class GameManager : MonoBehaviour
         {
             foreach (var building in allBuildings)
             {
-                if (building != null && building.plotData != null && building.isComplete)
+                if (building != null && building.PlotData != null && building.IsComplete)
                 {
-                    turnCalculations.AddBuildingGains(building.plotData.GainFunds, building.plotData.GainWood, building.plotData.GainStone, 0);
+                    turnCalculations.AddBuildingGains(building.PlotData.GainFunds, building.PlotData.GainWood, building.PlotData.GainStone, 0);
                 }
             }
             turnCalculations.updateall();

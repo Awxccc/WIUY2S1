@@ -10,9 +10,9 @@ public class NPCController : MonoBehaviour
     public float moveSpeed = 2f;
     public LayerMask groundLayer;
 
-    public Vector2 idleTimeRange = new Vector2(2f, 5f);
+    public Vector2 idleTimeRange = new(2f, 5f);
 
-    public Vector2 walkTimeRange = new Vector2(3f, 7f);
+    public Vector2 walkTimeRange = new(3f, 7f);
 
     private Rigidbody2D rb;
     private float currentDirection = 1f;

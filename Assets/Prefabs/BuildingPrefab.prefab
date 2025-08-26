@@ -162,3 +162,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 4217980691126918488}
   constructionSprite: {fileID: 21300000, guid: b929ff137fad23b4ea0c6c583701fd68, type: 3}
+  progressUIPrefab: {fileID: 5526006743223693433, guid: 7afb781a3af3a1241b663ae7f9c6e096, type: 3}

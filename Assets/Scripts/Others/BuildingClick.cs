@@ -14,7 +14,7 @@ public class BuildingClick : MonoBehaviour
 
     public void HandleClick()
     {
-        if (buildingProgress != null && !buildingProgress.isComplete)
+        if (buildingProgress != null && !buildingProgress.IsComplete)
         {
             return;
         }
