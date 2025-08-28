@@ -397,6 +397,14 @@ public class BuildingManager : MonoBehaviour
             newBp.Initialize(upgradeData, upgradeData.TurnsToBuild);
             GameManager.Instance.allBuildings.Add(newBp);
         }
+        if (upgradeData.PlotName == "Dock")
+        {
+            Trading trading = FindFirstObjectByType<Trading>();
+            if (trading != null)
+            {
+                trading.UpdateTradeCapacity(newBp.CurrentLevel);
+            }
+        }
 
         AudioManager.Instance.ForcePlaceSFX(3);
         Destroy(buildingToUpgrade);

@@ -1,8 +1,5 @@
-using UnityEngine;
 using TMPro;
-using Unity.VisualScripting;
-using System.Collections;
-using UnityEngine.Events;
+using UnityEngine;
 public class TurnCalculations : MonoBehaviour
 {
     public GameManager gamemanager;
@@ -17,35 +14,35 @@ public class TurnCalculations : MonoBehaviour
     void Start()
     {
         GDPUI.text = $" {0} / 182";
-        GDPUI.color = new Color(1f,0.6f,0.55f,1f);
+        GDPUI.color = new Color(1f, 0.6f, 0.55f, 1f);
     }
     // add for current mood change (so that it can collate at the end of the turn)
-    public void addmoodchange(float changeamt)
+    public void Addmoodchange(float changeamt)
     {
         currentmoodchange += changeamt;
         Debug.Log("changeamt " + changeamt + " mood! Current Mood Change: " + currentmoodchange);
     }
 
     // add for current cash change
-    public void addcashchange(int changeamt)
+    public void Addcashchange(int changeamt)
     {
         currentcashchange += changeamt;
     }
 
     // add for current wood change
-    public void addwoodchange(int changeamt)
+    public void Addwoodchange(int changeamt)
     {
         currentwoodchange += changeamt;
     }
 
     // add for current stone change
-    public void addstonechange(int changeamt)
+    public void Addstonechange(int changeamt)
     {
         currentstonechange += changeamt;
     }
 
     // change the mood stats
-    public void updatemood()
+    public void Updatemood()
     {
         // round off to whole number
         float roundedmood = (float)System.Math.Round(currentmoodchange, 0);
@@ -53,19 +50,19 @@ public class TurnCalculations : MonoBehaviour
     }
 
     // change the cash stats
-    public void updatecash()
+    public void Updatecash()
     {
         gamemanager.AddFunds(currentcashchange);
     }
 
     // change the wood stats
-    public void updatewood()
+    public void Updatewood()
     {
         gamemanager.AddWood(currentwoodchange);
     }
 
     // change the stone stats
-    public void updatestone()
+    public void Updatestone()
     {
         gamemanager.AddStone(currentstonechange);
     }
@@ -74,7 +71,8 @@ public class TurnCalculations : MonoBehaviour
     public int GDPcalculator()
     {
         int population = gamemanager.Population;
-        int GDP = currentcashchange / population;
+        if (population == 0) return 0;
+        int GDP = Mathf.RoundToInt((float)currentcashchange / population);
 
         return GDP;
     }
@@ -84,10 +82,10 @@ public class TurnCalculations : MonoBehaviour
         currentwoodchange += wood;
         currentstonechange += stone;
     }
-    public void updateall()
+    public void Updateall()
     {
         int GDP = GDPcalculator();
-        if (gamemanager.CurrentTurn >= gamemanager.MaximumTurn + 1)
+        if (gamemanager.CurrentTurn >= gamemanager.MaximumTurn)
         {
             endscreen.ShowEndResult();
         }
@@ -110,11 +108,15 @@ public class TurnCalculations : MonoBehaviour
     }
 
     //reset all values
-    public void turnend()
+    public void Turnend()
     {
         currentcashchange = 0;
         currentmoodchange = 0f;
         currentwoodchange = 0;
         currentstonechange = 0;
+    }
+    public int GetCurrentCashChange()
+    {
+        return currentcashchange;
     }
 }

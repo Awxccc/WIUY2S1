@@ -7,6 +7,7 @@ public class EndScreen : MonoBehaviour
 {
     [Header("References")]
     public GameManager gamemanager;
+    public TurnCalculations turnCalculations;
     public TextMeshProUGUI resultTextWin;
     public TextMeshProUGUI resultTextLose;
 
@@ -16,12 +17,18 @@ public class EndScreen : MonoBehaviour
 
     public void ShowEndResult()
     {
-        int GDP = gamemanager.turnCalculations.GDPcalculator();
+        int finalCashChange = turnCalculations.GetCurrentCashChange();
         int POP = gamemanager.Population;
-        bool Population = gamemanager.HasEnoughPopulation(60);
+        int GDP = 0;
 
+        if (POP > 0)
+        {
+            GDP = Mathf.RoundToInt((float)finalCashChange / POP);
+        }
 
-        if (GDP >= 182 && Population == true)
+        bool hasEnoughPopulation = gamemanager.HasEnoughPopulation(60);
+
+        if (GDP >= 182 && hasEnoughPopulation)
         {
             resultTextWin.text = $"Population: {POP} / 60\nGDP: {GDP} / 182";
             OnWin.Invoke();
@@ -33,8 +40,6 @@ public class EndScreen : MonoBehaviour
             OnLose.Invoke();
             StartCoroutine(FadeText(resultTextLose, 2f));
         }
-
-
     }
 
     private IEnumerator FadeText(TextMeshProUGUI text, float duration)

@@ -20,6 +20,7 @@ public class Trading : MonoBehaviour
     public int tradeamt1, tradeamt2, tradeamt3;
     public GameObject Slot2, Slot3;
     public GameManager gameManager;
+    public UICoreScript uiCore;
 
     private int prevlvl;
 
@@ -42,74 +43,56 @@ public class Trading : MonoBehaviour
     //purchasing items
     public void purchasingstuff(int slot)
     {
+        int amountToBuy = 1;
+        if (uiCore != null && uiCore.tradeAmountInput != null && !string.IsNullOrEmpty(uiCore.tradeAmountInput.text) && int.TryParse(uiCore.tradeAmountInput.text, out int parsedAmount))
+        {
+            amountToBuy = parsedAmount;
+        }
+
+        if (amountToBuy <= 0) return;
+
         //check if theres anymore stock
-        if (tradeamt1 > 0 && slot == 1)
+        if (slot == 1)
         {
-            //check if they have enough cash
-            if (gameManager.HasEnoughFunds(basestoneprice))
+            if (amountToBuy > tradeamt1) return;
+            int totalCost = basestoneprice * amountToBuy;
+            if (gameManager.HasEnoughFunds(totalCost))
             {
-                //trade for the goods
-                gameManager.AddFunds(-basestoneprice);
-
-                //reduce the cost
-                tradeamt1 -= 1;
-
-                //give the item the the player
-                gameManager.AddStone(1);
-
-                //play sound effect
+                gameManager.RemoveFunds(totalCost);
+                tradeamt1 -= amountToBuy;
+                gameManager.AddStone(amountToBuy);
                 AudioManager.Instance.ForcePlaceSFX(4);
             }
         }
-        if (tradeamt2 > 0 && slot == 2)
+        if (slot == 2)
         {
-            //check if they have enough cash
-            if (gameManager.HasEnoughFunds(basemetalprice))
+            if (amountToBuy > tradeamt2) return;
+            int totalCost = basemetalprice * amountToBuy;
+            if (gameManager.HasEnoughFunds(totalCost))
             {
-                //trade for the goods
-                gameManager.AddFunds(-basemetalprice);
-
-                //reduce the cost
-                tradeamt2 -= 1;
-
-                //give the item the the player
-                gameManager.AddMetal(1);
-
-                //play sound effect
+                gameManager.RemoveFunds(totalCost);
+                tradeamt2 -= amountToBuy;
+                gameManager.AddMetal(amountToBuy);
                 AudioManager.Instance.ForcePlaceSFX(4);
             }
         }
-        if (tradeamt3 > 0 && slot == 3)
+        if (slot == 3)
         {
-            //check if they have enough cash
-            if (gameManager.HasEnoughFunds(basewoodprice))
+            if (amountToBuy > tradeamt3) return;
+            int totalCost = basewoodprice * amountToBuy;
+            if (gameManager.HasEnoughFunds(totalCost))
             {
-                //trade for the goods
-                gameManager.AddFunds(-basewoodprice);
-
-                //reduce the cost
-                tradeamt3 -= 1;
-
-                //give the item the the player
-                gameManager.AddWood(1);
-
-                //play sound effect
+                gameManager.RemoveFunds(totalCost);
+                tradeamt3 -= amountToBuy;
+                gameManager.AddWood(amountToBuy);
                 AudioManager.Instance.ForcePlaceSFX(4);
             }
         }
     }
 
-    //call upon upgrading docks
     public void tradingSlots(int currentlvl)
     {
-        if (currentlvl != prevlvl)
-        {
-            baseminsold *= multiplier;
-            basemaxsold *= multiplier;
-        }
-
-
-        if (currentlvl >= 2)
+        if (currentlvl >= 2 && currentlvl < 4)
         {
             Slot2.SetActive(true);
         }
@@ -126,7 +109,17 @@ public class Trading : MonoBehaviour
         {
             Slot3.SetActive(false);
         }
+    }
 
-        prevlvl = currentlvl;
+    public void UpdateTradeCapacity(int newLevel)
+    {
+        baseminsold = 1;
+        basemaxsold = 5;
+
+        for (int i = 1; i < newLevel; i++)
+        {
+            baseminsold *= multiplier;
+            basemaxsold *= multiplier;
+        }
     }
 }

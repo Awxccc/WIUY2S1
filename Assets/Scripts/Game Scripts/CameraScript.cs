@@ -66,4 +66,8 @@ public class CameraScript : MonoBehaviour
             CameraTarget.position = new Vector3(0f, 0f, 0f);
         }
     }
+    public void SetEdgeScrollSpeed(float newSpeed)
+    {
+        edgeScrollSpeed = newSpeed;
+    }
 }

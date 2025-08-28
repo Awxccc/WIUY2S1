@@ -1,5 +1,5 @@
-using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -112,16 +112,8 @@ public class GameManager : MonoBehaviour
                     turnCalculations.AddBuildingGains(building.PlotData.GainFunds, building.PlotData.GainWood, building.PlotData.GainStone, 0);
                 }
             }
-            turnCalculations.updateall();
-            turnCalculations.turnend();
-            if(currentTurn > maximumTurn)
-            {
-                EndScreen endscreen = FindFirstObjectByType<EndScreen>();
-                if (endscreen != null)
-                {
-                    endscreen.ShowEndResult();
-                }
-            }
+            turnCalculations.Updateall();
+            turnCalculations.Turnend();
         }
 
         foreach (BuildingProgress b in allBuildings)

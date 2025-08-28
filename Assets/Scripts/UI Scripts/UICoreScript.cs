@@ -10,6 +10,7 @@ public class UICoreScript : MonoBehaviour
     public GameObject UIGameViewer;
     public GameObject UIPlotViewer;
     public GameObject UIWorldMap;
+    public GameObject UIMiniMap;
     public TextMeshProUGUI YearText;
     public TextMeshProUGUI MonthText;
     public TextMeshProUGUI turnTimeText;
@@ -25,6 +26,9 @@ public class UICoreScript : MonoBehaviour
     public TextMeshProUGUI Cash2;
     public TextMeshProUGUI Cash3;
     public TextMeshProUGUI quickBuildText;
+    public TMP_InputField tradeAmountInput;
+    public Slider cameraSpeedSlider;
+    public CameraScript cameraScript;
     public Image MoodImage;
     public Sprite MoodGreat;
     public Sprite MoodGood;
@@ -64,6 +68,11 @@ public class UICoreScript : MonoBehaviour
 
             UIPlotViewer.transform.localPosition = startPos;
             UICategoryButton.SetActive(showPlotViewer);
+        }
+        if (cameraSpeedSlider != null && cameraScript != null)
+        {
+            cameraSpeedSlider.value = cameraScript.edgeScrollSpeed;
+            cameraSpeedSlider.onValueChanged.AddListener(OnCameraSpeedChanged);
         }
 
         UpdateUIBasedOnQuadrant();
@@ -109,6 +118,8 @@ public class UICoreScript : MonoBehaviour
         UIPlotViewer.transform.localPosition = newPosition;
         UICategoryButton.SetActive(showPlotViewer);
         CancelBuildingButton.SetActive(BuildingManager.Instance != null && BuildingManager.Instance.isInPlacementMode);
+
+        if (UIMiniMap != null) UIMiniMap.SetActive(!showPlotViewer);
 
         // Update UI Resources
         FundsText.text = GameManager.Instance.Funds.ToString();
@@ -300,9 +311,16 @@ public class UICoreScript : MonoBehaviour
         return (year, month);
     }
 
-    public void ToggleQuickBuild(bool isOn)
+    public void ToggleAutoBuild(bool isOn)
     {
         isAutoBuildMode = isOn;
         Debug.Log("Quick Build Mode is now: " + (isOn ? "ON" : "OFF"));
+    }
+    public void OnCameraSpeedChanged(float value)
+    {
+        if (cameraScript != null)
+        {
+            cameraScript.SetEdgeScrollSpeed(value);
+        }
     }
 }
