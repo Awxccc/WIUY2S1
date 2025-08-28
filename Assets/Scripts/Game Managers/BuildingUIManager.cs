@@ -9,6 +9,7 @@ public class BuildingUIManager : MonoBehaviour
     public LayerMask buildingLayerMask = -1;
     public TextMeshProUGUI BuildingNameText;
     public TextMeshProUGUI BuildingInfoText;
+    public GameObject tradingPanel;
 
     private BuildingPosition selectedBuildingData;
     private GameObject selectedBuilding;
@@ -106,6 +107,10 @@ public class BuildingUIManager : MonoBehaviour
                 else if (trading != null)
                 {
                     trading.TradingSlots(0); // Pass 0 to hide all optional slots
+                    if (tradingPanel != null)
+                    {
+                        tradingPanel.SetActive(false); // Hide the trading panel
+                    }
                 }
             }
             UpdateBuildingContent();
@@ -122,6 +127,10 @@ public class BuildingUIManager : MonoBehaviour
         }
         selectedBuilding = null;
         selectedBuildingData = null;
+        if (tradingPanel != null)
+        {
+            tradingPanel.SetActive(false);
+        }
     }
 
     // Update 'UI-BuildingViewer' content with the selected building info

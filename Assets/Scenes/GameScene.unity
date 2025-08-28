@@ -12082,6 +12082,7 @@ MonoBehaviour:
     m_Bits: 128
   BuildingNameText: {fileID: 1361230441}
   BuildingInfoText: {fileID: 1952201194}
+  tradingPanel: {fileID: 4874471464601195644}
   Tradingbtn: {fileID: 1659312210}
   trading: {fileID: 472466078}
 --- !u!1 &917469102
