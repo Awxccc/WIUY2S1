@@ -10,13 +10,21 @@ public class AudioManager : MonoBehaviour
     public AudioClip[] era2Music;
     public AudioClip[] era3Music;
     [Range(0f, 1f)] public float musicVolume;
+    [Range(0f, 1f)] public float sfxVolume;
 
     [Header("Sound Effects Settings")]
     public AudioSource sfxSource;
     public AudioClip[] SFXArray;
+    public AudioClip[] ForcedSFXArray;
     public Button[] buttonsToPlaySFX;
 
-    private bool hasFocus = true;
+    [Header("UI Controls")]
+    public Slider musicVolumeSlider;
+    public Slider sfxVolumeSlider;
+    public Toggle musicMuteToggle;
+    public Toggle sfxMuteToggle;
+
+    private bool hasFocus = true, isMusicMuted = false, isSFXMuted = false;
     private int currentEra = 1, songIndex = 0;
 
     // Awake is called before the application starts
@@ -36,6 +44,7 @@ public class AudioManager : MonoBehaviour
     {
         musicSource.loop = false;
         musicSource.volume = musicVolume;
+        sfxSource.volume = sfxVolume;
         PlayCurrentBGM();
 
         // Add Sound Listener
@@ -46,6 +55,31 @@ public class AudioManager : MonoBehaviour
                 int buttonIndex = i;
                 buttonsToPlaySFX[i].onClick.AddListener(() => PlayButtonSound(buttonIndex));
             }
+        }
+
+        // Add Listeners to the volume slider & toggle
+        if (musicVolumeSlider != null)
+        {
+            musicVolumeSlider.value = musicVolume;
+            musicVolumeSlider.onValueChanged.AddListener(OnVolumeSliderChanged);
+        }
+
+        if (musicMuteToggle != null)
+        {
+            musicMuteToggle.isOn = isMusicMuted;
+            musicMuteToggle.onValueChanged.AddListener(OnMuteToggleChanged);
+        }
+
+        if (sfxVolumeSlider != null)
+        {
+            sfxVolumeSlider.value = sfxVolume;
+            sfxVolumeSlider.onValueChanged.AddListener(OnSFXVolumeSliderChanged);
+        }
+
+        if (sfxMuteToggle != null)
+        {
+            sfxMuteToggle.isOn = isSFXMuted;
+            sfxMuteToggle.onValueChanged.AddListener(OnSFXMuteToggleChanged);
         }
     }
 
@@ -124,6 +158,62 @@ public class AudioManager : MonoBehaviour
         if (buttonIndex < SFXArray.Length && SFXArray[buttonIndex] != null)
         {
             sfxSource.PlayOneShot(SFXArray[buttonIndex]);
+        }
+    }
+
+    public void ForcePlaceSFX(int SFXIndex)
+    {
+        if (SFXArray[SFXIndex] != null)
+        {
+            sfxSource.PlayOneShot(ForcedSFXArray[SFXIndex]);
+        }
+    }
+
+    public void OnVolumeSliderChanged(float sliderValue)
+    {
+        musicVolume = sliderValue;
+        UpdateMusicVolume();
+    }
+
+    public void OnMuteToggleChanged(bool isToggleOn)
+    {
+        isMusicMuted = isToggleOn;
+        UpdateMusicVolume();
+    }
+
+    public void OnSFXVolumeSliderChanged(float sliderValue)
+    {
+        sfxVolume = sliderValue;
+        UpdateSFXVolume();
+    }
+
+    public void OnSFXMuteToggleChanged(bool isToggleOn)
+    {
+        isSFXMuted = isToggleOn;
+        UpdateSFXVolume();
+    }
+
+    void UpdateMusicVolume()
+    {
+        if (isMusicMuted)
+        {
+            musicSource.volume = 0f;
+        }
+        else
+        {
+            musicSource.volume = musicVolume;
+        }
+    }
+
+    void UpdateSFXVolume()
+    {
+        if (isSFXMuted)
+        {
+            sfxSource.volume = 0f;
+        }
+        else
+        {
+            sfxSource.volume = sfxVolume;
         }
     }
 

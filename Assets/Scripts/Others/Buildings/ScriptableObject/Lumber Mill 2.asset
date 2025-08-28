@@ -30,5 +30,5 @@ MonoBehaviour:
   GainWood: 28
   GainStone: 0
   GainPopulation: 0
-  Description: more wood
+  Description: A highly efficient lumber mill to meet the demands of a growing city.
   Upgrades: []

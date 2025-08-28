@@ -26,9 +26,9 @@ MonoBehaviour:
   CostWood: 2
   CostStone: 1
   CostMetal: 0
-  GainFunds: 4
+  GainFunds: 1
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: 
+  Description: Small, independent shops that add vibrancy and character to your streets.
   Upgrades: []

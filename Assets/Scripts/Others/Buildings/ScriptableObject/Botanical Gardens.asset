@@ -27,8 +27,9 @@ MonoBehaviour:
   CostStone: 200
   CostMetal: 100
   GainFunds: 1000
-  GainWood: 0
+  GainWood: 200
   GainStone: 0
   GainPopulation: 0
-  Description: flowers
+  Description: The first and only tropical botanic garden on the UNESCO's World Heritage
+    List.
   Upgrades: []

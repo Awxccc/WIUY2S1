@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: Give protection make people feel safe
+  Description: A bastion of security, this base ensures the safety of your citizens
+    and boosts their confidence in your leadership.
   Upgrades: []

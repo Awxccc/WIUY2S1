@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class GridTemplateScript : MonoBehaviour
 {
-    public enum PlotBuildable { Land, Costal, Sea, Unavailable }
+    public enum PlotBuildable { Land, Coastal, Sea, Unavailable }
 
     [Header("Grid Settings")]
     public int templateWidth;
@@ -60,7 +60,7 @@ public class GridTemplateScript : MonoBehaviour
             case PlotBuildable.Land:
                 rgbColor = new Vector3(170, 205, 115);
                 break;
-            case PlotBuildable.Costal:
+            case PlotBuildable.Coastal:
                 rgbColor = new Vector3(225, 155, 200);
                 break;
             case PlotBuildable.Sea:

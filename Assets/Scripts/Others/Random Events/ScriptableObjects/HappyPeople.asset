@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: HappyPeople
   m_EditorClassIdentifier: 
   eventName: Happy People!
-  eventChance: 75
+  eventChance: 90
   minTurnTrigger: 1
   maxTurnTrigger: 120
   eventDescription: Your people are pretty happy this Year! +5 Mood
   option1Text: 
   option2Text: 
+  eventImage: {fileID: 2706758791239007319, guid: 96c9d939edcc8174f9e9a66639547c62, type: 3}
   option1RequiredFunds: 0
   option1RequiredWood: 0
   option1RequiredStone: 0

@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: super market
+  Description: A convenient and affordable source of groceries and household goods
+    for your citizens.
   Upgrades: []

@@ -30,6 +30,7 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: More slot and gurantees metal
+  Description: Expanded and improved docks to handle increased trade and boost your
+    economy.
   Upgrades:
   - {fileID: 11400000, guid: 78b91ae5b8095934496af24050eee1f1, type: 2}

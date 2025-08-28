@@ -26,9 +26,10 @@ MonoBehaviour:
   CostWood: 0
   CostStone: 150
   CostMetal: 300
-  GainFunds: 1000
+  GainFunds: 1500
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: flyer
+  Description: A scenic and efficient way to travel, the Singapore Ferry offers breathtaking
+    views of the city skyline and boosts tourism.
   Upgrades: []

@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class PlotManager : MonoBehaviour
 {
     public enum PlotCategory { General, Housing, Productivity, Recreational }
-    public enum PlotBuildable { Land, Costal, Sea }
+    public enum PlotBuildable { Land, Coastal, Sea }
 
     [Header("Building Data Settings")]
     public PlotData[] BuildingPlots;

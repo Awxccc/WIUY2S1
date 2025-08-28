@@ -30,5 +30,5 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: merlion
+  Description: A mythical creature with the head of a lion and the body of a fish.
   Upgrades: []

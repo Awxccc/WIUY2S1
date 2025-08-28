@@ -15,7 +15,7 @@ public class SceneLoader : MonoBehaviour
         string sceneName = currentScene.name;
         if (sceneName == "GameScene")
         {
-            var pauseAction = InputSystem.actions.FindAction("Pause");
+            InputAction pauseAction = InputSystem.actions.FindAction("Pause");
             pauseAction.started += ctx =>
             {
                 if (isPaused)

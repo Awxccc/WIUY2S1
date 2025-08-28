@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 5
-  Description: HDB can hold many people
+  Description: Modern, high-density public housing with all the comforts of contemporary
+    living.
   Upgrades: []

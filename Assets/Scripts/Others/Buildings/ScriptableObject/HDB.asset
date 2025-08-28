@@ -30,5 +30,7 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 2
-  Description: HDB can hold many people
-  Upgrades: []
+  Description: Affordable and quality public housing, the backbone of the nation's
+    housing program.
+  Upgrades:
+  - {fileID: 11400000, guid: 715a83000513f2444958035a120afb84, type: 2}

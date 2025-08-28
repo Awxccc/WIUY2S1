@@ -30,6 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 1
-  Description: 
-  Upgrades:
-  - {fileID: 11400000, guid: 1617aeb110ea6b84c98cc3e2942fe1a2, type: 2}
+  Description: Humble beginnings, these basic shelters are the first step to providing
+    housing for your fledgling population.
+  Upgrades: []

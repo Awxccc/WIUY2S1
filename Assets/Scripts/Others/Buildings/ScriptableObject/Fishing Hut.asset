@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: Get money
+  Description: A rustic and reliable source of food, the fishing hut is a vital part
+    of your early economy.
   Upgrades: []

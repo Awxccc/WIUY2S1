@@ -14,30 +14,22 @@ public class EndScreen : MonoBehaviour
     public UnityEvent OnWin;
     public UnityEvent OnLose;
 
-    private bool hasTriggered = false;
-
-    private void Update()
-    {
-        if (!hasTriggered && gamemanager.CurrentTurn >= gamemanager.MaximumTurn + 1)
-        {
-            ShowEndResult();
-            hasTriggered = true;
-        }
-    }
-
-    private void ShowEndResult()
+    public void ShowEndResult()
     {
         int GDP = gamemanager.turnCalculations.GDPcalculator();
+        int POP = gamemanager.Population;
+        bool Population = gamemanager.HasEnoughPopulation(60);
 
-        if (GDP > 91000)
+
+        if (GDP >= 182 && Population == true)
         {
-            resultTextWin.text = $"GDP: {GDP} / 91000\n<size=120%><color=green>You Win!</color></size>";
+            resultTextWin.text = $"Population: {POP} / 60\nGDP: {GDP} / 182";
             OnWin.Invoke();
             StartCoroutine(FadeText(resultTextWin, 2f)); // 2 seconds fade-in
         }
         else
         {
-            resultTextLose.text = $"GDP: {GDP} / 91000\n<size=120%><color=red>You Lose!</color></size>";
+            resultTextLose.text = $"Population: {POP} / 60\nGDP: {GDP} / 182";
             OnLose.Invoke();
             StartCoroutine(FadeText(resultTextLose, 2f));
         }
@@ -60,13 +52,3 @@ public class EndScreen : MonoBehaviour
         }
     }
 }
-
-
-
-
-
-
-
-
-
-

@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: More resources
+  Description: The pinnacle of maritime logistics, these docks provide a constant
+    stream of resources to fuel your city's growth.
   Upgrades: []

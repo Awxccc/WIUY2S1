@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 8
   GainPopulation: 0
-  Description: Gets stone
-  Upgrades: []
+  Description: A reliable source of stone for construction and development.
+  Upgrades:
+  - {fileID: 11400000, guid: 6b9e9c9e6fdb8324fa0abaa7eb6d1eb8, type: 2}

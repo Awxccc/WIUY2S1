@@ -46,7 +46,7 @@ public class UICoreScript : MonoBehaviour
     public GameObject PlotGridRecreational;
     public GameObject CancelBuildingButton;
 
-    public bool isQuickBuildMode = false;
+    public bool isAutoBuildMode = false;
 
     private Vector3 showPosition = new(-17.35f, 64.6f, -6.66f);
     private Vector3 hidePosition = new(-17.35f, -152f, -6.66f);
@@ -68,17 +68,17 @@ public class UICoreScript : MonoBehaviour
 
         UpdateUIBasedOnQuadrant();
         UpdateTimeDisplay();
-        var quickUpgradeAction = InputSystem.actions.FindAction("QuickUpgrade");
-        quickUpgradeAction.started += ctx =>
+        InputAction autoUpgradeAction = InputSystem.actions.FindAction("AutoUpgrade");
+        autoUpgradeAction.started += ctx =>
 
         {
-            if (isQuickBuildMode == false)
+            if (isAutoBuildMode == false)
             {
-                isQuickBuildMode = true;
+                isAutoBuildMode = true;
             }
             else
             {
-                isQuickBuildMode = false;
+                isAutoBuildMode = false;
             }
         };
     }
@@ -137,13 +137,17 @@ public class UICoreScript : MonoBehaviour
             MoodImage.sprite = MoodGood;
         else
             MoodImage.sprite = MoodGreat;
-        if (isQuickBuildMode)
+
+        // Update Auto Upgrade Mode
+        if (isAutoBuildMode)
         {
-            quickBuildText.text = "Quick Build ON";
+            quickBuildText.text = "[Q] Auto Upgrade On";
+            quickBuildText.color = new Color(0.45f, 0.65f, 0.275f, 1f);
         }
         else
         {
-            quickBuildText.text = "Quick Build OFF";
+            quickBuildText.text = "[Q] Auto Upgrade Off";
+            quickBuildText.color = new Color(0.65f, 0.3f, 0.275f, 1f);
         }
     }
 
@@ -298,7 +302,7 @@ public class UICoreScript : MonoBehaviour
 
     public void ToggleQuickBuild(bool isOn)
     {
-        isQuickBuildMode = isOn;
+        isAutoBuildMode = isOn;
         Debug.Log("Quick Build Mode is now: " + (isOn ? "ON" : "OFF"));
     }
 }

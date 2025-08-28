@@ -30,6 +30,6 @@ MonoBehaviour:
   GainWood: 10
   GainStone: 0
   GainPopulation: 0
-  Description: more wood
+  Description: An upgraded lumber mill for increased wood production.
   Upgrades:
   - {fileID: 11400000, guid: 2a134ee21e2582b4e94a40fdde41d84f, type: 2}

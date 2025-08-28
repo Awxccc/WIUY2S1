@@ -30,6 +30,7 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: More resource amounts
+  Description: A major shipping hub, these advanced docks can handle a massive volume
+    of cargo, supercharging your economy.
   Upgrades:
   - {fileID: 11400000, guid: 37f09429e4e59df4f88e0592081cbf83, type: 2}

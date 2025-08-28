@@ -26,9 +26,10 @@ MonoBehaviour:
   CostWood: 0
   CostStone: 0
   CostMetal: 150
-  GainFunds: 110
+  GainFunds: 200
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: 'Factory '
+  Description: The engine of your industry, this factory produces essential goods
+    and provides jobs for your citizens.
   Upgrades: []

@@ -45,36 +45,57 @@ public class Trading : MonoBehaviour
         //check if theres anymore stock
         if (tradeamt1 > 0 && slot == 1)
         {
-            //trade for the goods
-            gameManager.AddFunds(-basestoneprice);
+            //check if they have enough cash
+            if (gameManager.HasEnoughFunds(basestoneprice))
+            {
+                //trade for the goods
+                gameManager.AddFunds(-basestoneprice);
 
-            //reduce the cost
-            tradeamt1 -= 1;
+                //reduce the cost
+                tradeamt1 -= 1;
 
-            //give the item the the player
-            gameManager.AddStone(1);
+                //give the item the the player
+                gameManager.AddStone(1);
+
+                //play sound effect
+                AudioManager.Instance.ForcePlaceSFX(4);
+            }
         }
         if (tradeamt2 > 0 && slot == 2)
         {
-            //trade for the goods
-            gameManager.AddFunds(-basemetalprice);
+            //check if they have enough cash
+            if (gameManager.HasEnoughFunds(basemetalprice))
+            {
+                //trade for the goods
+                gameManager.AddFunds(-basemetalprice);
 
-            //reduce the cost
-            tradeamt2 -= 1;
+                //reduce the cost
+                tradeamt2 -= 1;
 
-            //give the item the the player
-            gameManager.AddMetal(1);
+                //give the item the the player
+                gameManager.AddMetal(1);
+
+                //play sound effect
+                AudioManager.Instance.ForcePlaceSFX(4);
+            }
         }
         if (tradeamt3 > 0 && slot == 3)
         {
-            //trade for the goods
-            gameManager.AddFunds(-basewoodprice);
+            //check if they have enough cash
+            if (gameManager.HasEnoughFunds(basewoodprice))
+            {
+                //trade for the goods
+                gameManager.AddFunds(-basewoodprice);
 
-            //reduce the cost
-            tradeamt3 -= 1;
+                //reduce the cost
+                tradeamt3 -= 1;
 
-            //give the item the the player
-            gameManager.AddWood(1);
+                //give the item the the player
+                gameManager.AddWood(1);
+
+                //play sound effect
+                AudioManager.Instance.ForcePlaceSFX(4);
+            }
         }
     }
 

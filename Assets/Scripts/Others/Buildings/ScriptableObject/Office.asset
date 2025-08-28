@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: 
+  Description: The heart of your city's business district, providing jobs and driving
+    economic growth.
   Upgrades: []

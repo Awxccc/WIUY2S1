@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: SadPeople
   m_EditorClassIdentifier: 
   eventName: Sad People..
-  eventChance: 125
+  eventChance: 90
   minTurnTrigger: 1
   maxTurnTrigger: 120
   eventDescription: Your people are pretty sad this Year! -5 Mood
   option1Text: 
   option2Text: 
+  eventImage: {fileID: -5647009529601392205, guid: 050088fa09712714eabb3684473be4e9, type: 3}
   option1RequiredFunds: 0
   option1RequiredWood: 0
   option1RequiredStone: 0

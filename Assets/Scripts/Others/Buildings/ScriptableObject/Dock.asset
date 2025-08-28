@@ -30,6 +30,7 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: Getting this will allow trading for extra resources
+  Description: The start of your maritime trade, these docks are essential for importing
+    and exporting goods.
   Upgrades:
   - {fileID: 11400000, guid: 786ea57400baccd488072376634afe85, type: 2}

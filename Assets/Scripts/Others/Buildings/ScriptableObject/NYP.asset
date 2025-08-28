@@ -26,9 +26,9 @@ MonoBehaviour:
   CostWood: 666
   CostStone: 666
   CostMetal: 666
-  GainFunds: 666
-  GainWood: 666
-  GainStone: 666
+  GainFunds: 0
+  GainWood: 0
+  GainStone: 0
   GainPopulation: 666
-  Description: nyp cause hejy wanted it
+  Description: Nyp best school ever!!!
   Upgrades: []

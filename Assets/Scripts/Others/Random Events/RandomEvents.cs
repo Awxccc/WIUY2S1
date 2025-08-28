@@ -10,6 +10,7 @@ public abstract class RandomEvents : ScriptableObject
     public string eventDescription;
     public string option1Text;
     public string option2Text;
+    public Sprite eventImage;
 
     public bool HasPlayerChoices()
     {

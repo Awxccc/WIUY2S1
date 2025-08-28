@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: 
+  Description: A place for your citizens to stay fit and healthy, while also generating
+    revenue.
   Upgrades: []

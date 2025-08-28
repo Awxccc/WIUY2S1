@@ -26,9 +26,10 @@ MonoBehaviour:
   CostWood: 0
   CostStone: 120
   CostMetal: 120
-  GainFunds: 500
+  GainFunds: 750
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: gambling
+  Description: A world-class integrated resort and casino, offering entertainment
+    and a significant source of revenue.
   Upgrades: []

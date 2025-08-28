@@ -30,5 +30,5 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 36
   GainPopulation: 0
-  Description: Gets stone
+  Description: An expanded stone quarry to fuel your city's growth.
   Upgrades: []

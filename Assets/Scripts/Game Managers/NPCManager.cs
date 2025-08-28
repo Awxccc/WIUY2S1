@@ -36,7 +36,7 @@ public class NPCManager : MonoBehaviour
 
     void Start()
     {
-        foreach (var container in animalContainers)
+        foreach (Transform container in animalContainers)
         {
             animalContainerStates[container] = container.gameObject.activeInHierarchy;
         }
@@ -90,7 +90,7 @@ public class NPCManager : MonoBehaviour
 
     private void SpawnInitialAnimals()
     {
-        var activeContainers = animalContainers.Where(c => c.gameObject.activeInHierarchy).ToList();
+        List<Transform> activeContainers = animalContainers.Where(c => c.gameObject.activeInHierarchy).ToList();
         if (activeContainers.Count == 0)
         {
             initialAnimalSpawnDone = true;
@@ -120,9 +120,9 @@ public class NPCManager : MonoBehaviour
 
     private void ManageHumanNpcPopulation()
     {
-        foreach (var container in npcContainers)
+        foreach (Transform container in npcContainers)
         {
-            var npcsInContainer = container.GetComponentsInChildren<NPCController>().ToList();
+            List<NPCController> npcsInContainer = container.GetComponentsInChildren<NPCController>().ToList();
 
             if (container.gameObject.activeInHierarchy)
             {
@@ -137,7 +137,7 @@ public class NPCManager : MonoBehaviour
                 // If we have more than desired, despawn the excess
                 while (npcsInContainer.Count > desiredNpcCount)
                 {
-                    var npcToDespawn = npcsInContainer.Last();
+                    NPCController npcToDespawn = npcsInContainer.Last();
                     activeNpcs.Remove(npcToDespawn);
                     Destroy(npcToDespawn.gameObject);
                     npcsInContainer.Remove(npcToDespawn);
@@ -145,7 +145,7 @@ public class NPCManager : MonoBehaviour
             }
             else
             {
-                foreach (var npc in npcsInContainer)
+                foreach (NPCController npc in npcsInContainer)
                 {
                     activeNpcs.Remove(npc);
                     Destroy(npc.gameObject);
@@ -167,13 +167,13 @@ public class NPCManager : MonoBehaviour
             HumanSprites chosenAppearance = eraAppearances[Random.Range(0, eraAppearances.Count)];
             GameObject newNpcObject = Instantiate(npcBasePrefab, groundPos.Value, Quaternion.identity, parentContainer);
 
-            if (newNpcObject.TryGetComponent<NPCController>(out var npcController))
+            if (newNpcObject.TryGetComponent<NPCController>(out NPCController npcController))
             {
                 npcController.SetAppearance(chosenAppearance);
                 activeNpcs.Add(npcController);
             }
 
-            var sr = newNpcObject.GetComponentInChildren<SpriteRenderer>();
+            SpriteRenderer sr = newNpcObject.GetComponentInChildren<SpriteRenderer>();
             if (sr != null)
             {
                 float halfHeight = sr.bounds.extents.y;
@@ -203,7 +203,7 @@ public class NPCManager : MonoBehaviour
     {
         activeAnimals.RemoveAll(item => item == null);
 
-        foreach (var container in animalContainers)
+        foreach (Transform container in animalContainers)
         {
             bool wasActive = animalContainerStates.ContainsKey(container) && animalContainerStates[container];
             bool isActive = container.gameObject.activeInHierarchy;
@@ -211,12 +211,12 @@ public class NPCManager : MonoBehaviour
             if (wasActive && !isActive)
             {
                 //Container become inactive and despawn animals
-                var animalsInContainer = container.GetComponentsInChildren<Transform>()
+                List<GameObject> animalsInContainer = container.GetComponentsInChildren<Transform>()
                     .Where(t => t.parent == container && activeAnimals.Contains(t.gameObject))
                     .Select(t => t.gameObject)
                     .ToList();
 
-                foreach (var animal in animalsInContainer)
+                foreach (GameObject animal in animalsInContainer)
                 {
                     activeAnimals.Remove(animal);
                     Destroy(animal);
@@ -253,8 +253,8 @@ public class NPCManager : MonoBehaviour
 
             GameObject newAnimalObject = Instantiate(animalBasePrefab, groundPos.Value, Quaternion.identity, parentContainer);
 
-            var sr = newAnimalObject.GetComponentInChildren<SpriteRenderer>();
-            var anim = newAnimalObject.GetComponentInChildren<Animator>();
+            SpriteRenderer sr = newAnimalObject.GetComponentInChildren<SpriteRenderer>();
+            Animator anim = newAnimalObject.GetComponentInChildren<Animator>();
             if (sr) sr.sprite = chosenAppearance.sprite;
             if (anim) anim.runtimeAnimatorController = chosenAppearance.animatorOverride;
 

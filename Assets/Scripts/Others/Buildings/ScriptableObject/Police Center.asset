@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: 
+  Description: Keeping your city safe and secure, the police center is essential
+    for maintaining law and order.
   Upgrades: []

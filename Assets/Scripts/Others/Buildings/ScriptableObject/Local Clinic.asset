@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: 
+  Description: Providing essential healthcare services to the community, keeping
+    your citizens healthy and productive.
   Upgrades: []

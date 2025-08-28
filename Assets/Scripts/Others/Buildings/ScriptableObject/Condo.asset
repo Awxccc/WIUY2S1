@@ -22,13 +22,14 @@ MonoBehaviour:
   TurnsToBuild: 6
   TileSizeWidth: 8
   TileSizeHeight: 7
-  CostFunds: 100
+  CostFunds: 75
   CostWood: 0
-  CostStone: 100
-  CostMetal: 100
-  GainFunds: 0
+  CostStone: 50
+  CostMetal: 50
+  GainFunds: 40
   GainWood: 0
   GainStone: 0
   GainPopulation: 8
-  Description: premium hdb
+  Description: Luxurious high-rise living with premium amenities, attracting affluent
+    residents and boosting the city's prestige.
   Upgrades: []

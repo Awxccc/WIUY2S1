@@ -88,7 +88,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "QuickUpgrade",
+                    "name": "AutoUpgrade",
                     "type": "Button",
                     "id": "2b1dc9c0-0136-4f70-ab66-f332bc5c7877",
                     "expectedControlType": "",
@@ -499,7 +499,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "QuickUpgrade",
+                    "action": "AutoUpgrade",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

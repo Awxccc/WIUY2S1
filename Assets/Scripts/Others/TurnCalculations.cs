@@ -1,14 +1,24 @@
 using UnityEngine;
-
+using TMPro;
+using Unity.VisualScripting;
+using System.Collections;
+using UnityEngine.Events;
 public class TurnCalculations : MonoBehaviour
 {
     public GameManager gamemanager;
+    public TextMeshProUGUI GDPUI;
     public PlotManager plot;
+    public EndScreen endscreen;
     private float currentmoodchange;
     private int currentcashchange;
     private int currentwoodchange;
     private int currentstonechange;
 
+    void Start()
+    {
+        GDPUI.text = $" {0} / 182";
+        GDPUI.color = new Color(1f,0.6f,0.55f,1f);
+    }
     // add for current mood change (so that it can collate at the end of the turn)
     public void addmoodchange(float changeamt)
     {
@@ -76,7 +86,22 @@ public class TurnCalculations : MonoBehaviour
     }
     public void updateall()
     {
-        GDPcalculator();
+        int GDP = GDPcalculator();
+        if (gamemanager.CurrentTurn >= gamemanager.MaximumTurn + 1)
+        {
+            endscreen.ShowEndResult();
+        }
+        if (GDP >= 182)
+        {
+            GDPUI.text = $" {GDP} / 182";
+            GDPUI.color = new Color(0.625f, 1f, 0.55f, 1f);
+        }
+        else
+        {
+            GDPUI.text = $" {GDP} / 182";
+            GDPUI.color = new Color(1f, 0.6f, 0.55f, 1f);
+        }
+
         gamemanager.AddFunds(currentcashchange);
         gamemanager.AddWood(currentwoodchange);
         gamemanager.AddStone(currentstonechange);

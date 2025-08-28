@@ -21,7 +21,7 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
     private GameObject UIPlotInfo;
     private Transform PlotPanel;
-    private Image PlotImage;
+    private Image PlotImage, PlotNameImage;
     private TextMeshProUGUI PlotNameText, PlotResource1Text, PlotResource2Text, PlotResource3Text, PlotResource4Text;
     private TextMeshProUGUI PlotSizeText, PlotTurnsText, PlotDescriptionText;
 
@@ -49,6 +49,7 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
             if (PlotPanel != null)
             {
                 PlotImage = PlotPanel.Find("PlotImage")?.GetComponent<Image>();
+                PlotNameImage = PlotPanel.Find("PlotName")?.GetComponent<Image>();
                 PlotNameText = PlotPanel.Find("PlotName")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
                 PlotResource1Text = PlotPanel.Find("PlotResource1")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
                 PlotResource2Text = PlotPanel.Find("PlotResource2")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
@@ -56,7 +57,7 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
                 PlotResource4Text = PlotPanel.Find("PlotResource4")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
                 PlotSizeText = PlotPanel.Find("PlotSize")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
                 PlotTurnsText = PlotPanel.Find("PlotTurns")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
-                PlotDescriptionText = PlotPanel.Find("PlotDescription")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
+                PlotDescriptionText = PlotPanel.Find("PlotDescription")?.Find("ScrollBar")?.Find("Viewport")?.Find("Content")?.Find("UIText")?.GetComponent<TextMeshProUGUI>();
             }
 
             UIPlotInfo.SetActive(false);
@@ -114,6 +115,22 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
         if (PlotDescriptionText != null)
             PlotDescriptionText.text = Description;
+
+        switch (BuildingType)
+        {
+            case PlotManager.PlotBuildable.Land:
+                PlotNameImage.color = new Color(0.75f, 1f, 0.8f, 1f);
+                break;
+            case PlotManager.PlotBuildable.Coastal:
+                PlotNameImage.color = new Color(1f, 0.75f, 0.85f, 1f);
+                break;
+            case PlotManager.PlotBuildable.Sea:
+                PlotNameImage.color = new Color(0.75f, 0.8f, 1f, 1f);
+                break;
+            default:
+                PlotNameImage.color = Color.white;
+                break;
+        }
     }
 
     public void OnPointerClick(PointerEventData eventData)
@@ -124,6 +141,7 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
             return;
         }
 
+        AudioManager.Instance.ForcePlaceSFX(5);
         BuildingManager.Instance.StartPlacement(plotData);
     }
 
@@ -136,7 +154,9 @@ public class UIButtonData : MonoBehaviour, IPointerClickHandler, IPointerEnterHa
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if (UIPlotInfo != null)
+        if (UIPlotInfo == null) return;
+
+        if (BuildingManager.Instance != null && !BuildingManager.Instance.isInPlacementMode)
         {
             UIPlotInfo.SetActive(false);
         }

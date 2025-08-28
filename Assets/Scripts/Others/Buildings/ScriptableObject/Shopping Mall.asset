@@ -30,5 +30,6 @@ MonoBehaviour:
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: Shopping mall
+  Description: A modern retail paradise, offering a wide variety of goods and services
+    to your citizens.
   Upgrades: []

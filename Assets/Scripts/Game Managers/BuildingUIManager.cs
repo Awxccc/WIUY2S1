@@ -1,5 +1,5 @@
-using TMPro;
 using UnityEngine;
+using TMPro;
 
 public class BuildingUIManager : MonoBehaviour
 {
@@ -13,7 +13,7 @@ public class BuildingUIManager : MonoBehaviour
     private BuildingPosition selectedBuildingData;
     private GameObject selectedBuilding;
 
-    private string docks = "Dock_Building"; //exact name (dont change dock_building)
+    private string docks = "Dock_Building"; // Exact name (dont change dock_building)
     public GameObject Tradingbtn;
     public Trading trading;
 
@@ -51,7 +51,7 @@ public class BuildingUIManager : MonoBehaviour
 
             foreach (RaycastHit2D hit in hits)
             {
-                if (hit.collider.TryGetComponent<BuildingClick>(out var buildingClick))
+                if (hit.collider.TryGetComponent<BuildingClick>(out BuildingClick buildingClick))
                 {
                     buildingClick.HandleClick();
                     return;
@@ -128,7 +128,7 @@ public class BuildingUIManager : MonoBehaviour
     void UpdateBuildingContent()
     {
         if (selectedBuildingData == null) return;
-        if (!selectedBuilding.TryGetComponent<BuildingProgress>(out var bp)) return;
+        if (!selectedBuilding.TryGetComponent<BuildingProgress>(out BuildingProgress bp)) return;
 
         // Show the building name and level on the UI
         if (BuildingNameText != null)
@@ -141,9 +141,10 @@ public class BuildingUIManager : MonoBehaviour
         if (BuildingInfoText != null)
         {
             BuildingInfoText.text =
-                $"Size: {selectedBuildingData.width}x{selectedBuildingData.height}\n" +
-                $"Position: ({selectedBuildingData.gridX}, {selectedBuildingData.gridY})\n" +
-                $"Grid: {selectedBuildingData.gridID}";
+                $" Size: {selectedBuildingData.width}x{selectedBuildingData.height}\n" +
+                $" Benefits: {selectedBuildingData.fundsEarned} Funds, {selectedBuildingData.woodEarned} Wood, {selectedBuildingData.stoneEarned} Stone\n" +
+                $" Population: {selectedBuildingData.populationEarned}\n" +
+                $" Upgrade Cost: {selectedBuildingData.upgradeFunds} Funds, {selectedBuildingData.upgradeWoods} Wood, {selectedBuildingData.upgradeStones} Stone, {selectedBuildingData.upgradeMetals} Metal";
         }
     }
 
@@ -170,11 +171,13 @@ public class BuildingUIManager : MonoBehaviour
             }
             else
             {
+                AudioManager.Instance.ForcePlaceSFX(1);
                 Debug.Log("Not enough resources to upgrade");
             }
         }
         else
         {
+            AudioManager.Instance.ForcePlaceSFX(1);
             Debug.Log("No upgrade available for this building.");
         }
     }
@@ -212,7 +215,6 @@ public class BuildingUIManager : MonoBehaviour
             // Remove the building from the GameManager's list
             GameManager.Instance.allBuildings.Remove(bp);
         }
-
 
         Destroy(selectedBuilding);
         HideBuildingInfo();

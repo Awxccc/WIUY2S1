@@ -1,31 +1,26 @@
-using System.Collections.Generic; // Add this line
 using UnityEngine;
+using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
     [Header("Game Manager Settings")]
     public static GameManager Instance;
-    public int ViewingQuadrant;
-
-    // Game Resources
-    public int Funds, Wood, Stone, Metal, Population;
+    public List<BuildingProgress> allBuildings = new();
+    public TurnCalculations turnCalculations;
+    public Trading trading;
+    public int ViewingQuadrant, Funds, Wood, Stone, Metal, Population;
     public float Mood;
 
-    // Turn System
     [SerializeField] private int currentTurn;
     [SerializeField] private int maximumTurn;
     [SerializeField] private float currentTurnTime;
     [SerializeField] private float initialTurnTimeCount;
 
-    // Add this list to track all buildings
-    public List<BuildingProgress> allBuildings = new();
-
     public int CurrentTurn => currentTurn;
     public int MaximumTurn => maximumTurn;
     public float CurrentTurnTime => currentTurnTime;
-    public TurnCalculations turnCalculations;
-    public Trading trading;
 
+    // Awake is called before the application starts
     void Awake()
     {
         if (Instance != null && Instance != this)
@@ -35,24 +30,22 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        //DontDestroyOnLoad(gameObject);
     }
 
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
     private void Start()
     {
         currentTurn = 1;
         currentTurnTime = initialTurnTimeCount;
     }
 
+    // Update is called once per frame
     private void Update()
     {
         UpdateTurns();
     }
 
-    // =============================
     // Resource Management
-    // =============================
-
     public void AddFunds(int amount) { Funds += amount; Debug.Log($"Added {amount} funds! Current: {Funds}"); }
     public void RemoveFunds(int amount) { Funds = Mathf.Max(0, Funds - amount); Debug.Log($"Removed {amount} funds! Current: {Funds}"); }
     public void SetFunds(int amount) { Funds = amount; Debug.Log($"Set funds to: {Funds}"); }
@@ -112,7 +105,7 @@ public class GameManager : MonoBehaviour
 
         if (turnCalculations != null)
         {
-            foreach (var building in allBuildings)
+            foreach (BuildingProgress building in allBuildings)
             {
                 if (building != null && building.PlotData != null && building.IsComplete)
                 {
@@ -121,9 +114,17 @@ public class GameManager : MonoBehaviour
             }
             turnCalculations.updateall();
             turnCalculations.turnend();
+            if(currentTurn > maximumTurn)
+            {
+                EndScreen endscreen = FindFirstObjectByType<EndScreen>();
+                if (endscreen != null)
+                {
+                    endscreen.ShowEndResult();
+                }
+            }
         }
 
-        foreach (var b in allBuildings)
+        foreach (BuildingProgress b in allBuildings)
         {
             if (b != null)
             {

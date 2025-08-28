@@ -17,6 +17,7 @@ public class EventManager : MonoBehaviour
     public Button CloseBtn;
     public TextMeshProUGUI OptionOneBtnText;
     public TextMeshProUGUI OptionTwoBtnText;
+    public Image EventImageIcon;
 
     private RandomEvents currentActiveEvent;
 
@@ -71,6 +72,7 @@ public class EventManager : MonoBehaviour
         EventInfoText.text = eventData.eventDescription;
         OptionOneBtnText.text = eventData.option1Text;
         OptionTwoBtnText.text = eventData.option2Text;
+        EventImageIcon.sprite = eventData.eventImage;
         UIEventViewer.SetActive(true);
 
         // Check if we have choices to display or not and also toggle the closeBtn accordingly
@@ -83,6 +85,7 @@ public class EventManager : MonoBehaviour
         if (!hasChoices)
             eventData.TriggerNoChoice();
 
+        AudioManager.Instance.ForcePlaceSFX(2);
         Debug.Log($"{eventData.eventName} has been triggered!");
     }
 

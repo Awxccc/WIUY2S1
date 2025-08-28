@@ -1,0 +1,56 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0f7d7fdbf13eed4eb5c921f5c88b0a5, type: 3}
+  m_Name: Winning the lottery
+  m_EditorClassIdentifier: 
+  eventName: Winning the lottery
+  eventChance: 200
+  minTurnTrigger: 100
+  maxTurnTrigger: 120
+  eventDescription: Someone has won the lottery
+  option1Text: 
+  option2Text: 
+  eventImage: {fileID: 3775008147582804342, guid: 551c2cd52bd992a4c8e217fb149cf668, type: 3}
+  targetBuildingName: Casino
+  option1RequiredFunds: 0
+  option1RequiredWood: 0
+  option1RequiredStone: 0
+  option1RequiredMetal: 0
+  option1RequiredPopulation: 0
+  option1RequiredMood: 0
+  option1CalculationType: 0
+  option1FundsChange: 0
+  option1WoodChange: 0
+  option1StoneChange: 0
+  option1MetalChange: 0
+  option1PopulationChange: 0
+  option1MoodChange: 0
+  option2RequiredFunds: 0
+  option2RequiredWood: 0
+  option2RequiredStone: 0
+  option2RequiredMetal: 0
+  option2RequiredPopulation: 0
+  option2RequiredMood: 0
+  option2CalculationType: 0
+  option2FundsChange: 0
+  option2WoodChange: 0
+  option2StoneChange: 0
+  option2MetalChange: 0
+  option2PopulationChange: 0
+  option2MoodChange: 0
+  noChoiceCalculationType: 0
+  noChoiceFundsChange: 250
+  noChoiceWoodChange: 0
+  noChoiceStoneChange: 0
+  noChoiceMetalChange: 0
+  noChoicePopulationChange: 0
+  noChoiceMoodChange: 10

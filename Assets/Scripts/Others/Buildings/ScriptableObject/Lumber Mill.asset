@@ -30,6 +30,6 @@ MonoBehaviour:
   GainWood: 2
   GainStone: 0
   GainPopulation: 0
-  Description: wood
+  Description: A steady supply of wood for construction and industry.
   Upgrades:
   - {fileID: 11400000, guid: 1eaa67e515097bf47854f8f4b5dee927, type: 2}

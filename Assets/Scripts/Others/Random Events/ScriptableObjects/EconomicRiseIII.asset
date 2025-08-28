@@ -13,12 +13,13 @@ MonoBehaviour:
   m_Name: EconomicRiseIII
   m_EditorClassIdentifier: 
   eventName: Economic Rise
-  eventChance: 150
+  eventChance: 100
   minTurnTrigger: 81
   maxTurnTrigger: 120
   eventDescription: The economy seem to be doing well this Year! +50 Funds
   option1Text: 
   option2Text: 
+  eventImage: {fileID: -103552792185707809, guid: 26a59f1878b970f4db1d3854bf08ca7e, type: 3}
   option1RequiredFunds: 0
   option1RequiredWood: 0
   option1RequiredStone: 0

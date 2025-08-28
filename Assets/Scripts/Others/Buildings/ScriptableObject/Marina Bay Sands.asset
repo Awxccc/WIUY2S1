@@ -26,9 +26,10 @@ MonoBehaviour:
   CostWood: 0
   CostStone: 100
   CostMetal: 300
-  GainFunds: 1000
+  GainFunds: 2000
   GainWood: 0
   GainStone: 0
   GainPopulation: 0
-  Description: gambling hotel
+  Description: An integrated resort fronting Marina Bay in Singapore and a landmark
+    of the city
   Upgrades: []
