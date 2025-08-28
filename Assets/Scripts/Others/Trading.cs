@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Trading : MonoBehaviour
 {
-    public int multiplier = 2;
+    public int multiplier = 3;
     public int basewoodprice = 3;
     public int basestoneprice = 5;
     public int basemetalprice = 5;

@@ -39097,7 +39097,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 472466078}
         m_TargetAssemblyTypeName: Trading, Assembly-CSharp
-        m_MethodName: purchasingstuff
+        m_MethodName: Purchasingstuff
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -42307,7 +42307,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 472466078}
         m_TargetAssemblyTypeName: Trading, Assembly-CSharp
-        m_MethodName: purchasingstuff
+        m_MethodName: Purchasingstuff
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -65147,7 +65147,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 472466078}
         m_TargetAssemblyTypeName: Trading, Assembly-CSharp
-        m_MethodName: purchasingstuff
+        m_MethodName: Purchasingstuff
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

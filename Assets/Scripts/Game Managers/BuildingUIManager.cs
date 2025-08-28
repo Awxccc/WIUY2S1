@@ -142,9 +142,9 @@ public class BuildingUIManager : MonoBehaviour
         {
             BuildingInfoText.text =
                 $" Size: {selectedBuildingData.width}x{selectedBuildingData.height}\n" +
-                $" Benefits: {selectedBuildingData.fundsEarned} Funds, {selectedBuildingData.woodEarned} Wood, {selectedBuildingData.stoneEarned} Stone\n" +
+                $" Benefits: +${selectedBuildingData.fundsEarned}, +{selectedBuildingData.woodEarned} Wood, +{selectedBuildingData.stoneEarned} Stone\n" +
                 $" Population: {selectedBuildingData.populationEarned}\n" +
-                $" Upgrade Cost: {selectedBuildingData.upgradeFunds} Funds, {selectedBuildingData.upgradeWoods} Wood, {selectedBuildingData.upgradeStones} Stone, {selectedBuildingData.upgradeMetals} Metal";
+                $" Upgrade Cost: ${selectedBuildingData.upgradeFunds}, {selectedBuildingData.upgradeWoods} Wood, {selectedBuildingData.upgradeStones} Stone, {selectedBuildingData.upgradeMetals} Metal";
         }
     }
 
