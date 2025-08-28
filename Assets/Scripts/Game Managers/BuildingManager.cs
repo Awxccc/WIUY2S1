@@ -32,7 +32,6 @@ public class BuildingManager : MonoBehaviour
         {
             if (GameManager.Instance == null || GameManager.Instance.ViewingQuadrant == 0)
                 return;
-
             GameObject currentQuadrant = GetCurrentQuadrant();
             if (currentQuadrant == null) return;
 

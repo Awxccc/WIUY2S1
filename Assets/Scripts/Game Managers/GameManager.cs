@@ -97,18 +97,18 @@ public class GameManager : MonoBehaviour
 
         if (trading != null)
         {
-            trading.gettradeamt();
+            trading.Gettradeamt();
         }
 
         if (EventManager.Instance != null)
             EventManager.Instance.CheckForEvents();
 
         if (turnCalculations != null)
-        {
+        {//Loop through all placed buildings
             foreach (BuildingProgress building in allBuildings)
             {
                 if (building != null && building.PlotData != null && building.IsComplete)
-                {
+                {//Check if buildings are valid and finished construction then gain resources
                     turnCalculations.AddBuildingGains(building.PlotData.GainFunds, building.PlotData.GainWood, building.PlotData.GainStone, 0);
                 }
             }
@@ -119,7 +119,7 @@ public class GameManager : MonoBehaviour
         foreach (BuildingProgress b in allBuildings)
         {
             if (b != null)
-            {
+            {//Progress building construction
                 b.BuildTurn();
             }
         }

@@ -26,10 +26,10 @@ public class Trading : MonoBehaviour
 
     void Start()
     {
-        gettradeamt();
+        Gettradeamt();
     }
     //randomiser for getting the amount sold this turn
-    public void gettradeamt()
+    public void Gettradeamt()
     {
         basewoodprice = UnityEngine.Random.Range(minWoodPrice, maxWoodPrice + 1);
         basestoneprice = UnityEngine.Random.Range(minStonePrice, maxStonePrice + 1);
@@ -41,7 +41,7 @@ public class Trading : MonoBehaviour
     }
 
     //purchasing items
-    public void purchasingstuff(int slot)
+    public void Purchasingstuff(int slot)
     {
         int amountToBuy = 1;
         if (uiCore != null && uiCore.tradeAmountInput != null && !string.IsNullOrEmpty(uiCore.tradeAmountInput.text) && int.TryParse(uiCore.tradeAmountInput.text, out int parsedAmount))
@@ -90,9 +90,9 @@ public class Trading : MonoBehaviour
         }
     }
 
-    public void tradingSlots(int currentlvl)
+    public void TradingSlots(int currentlvl)
     {
-        if (currentlvl >= 2 && currentlvl < 4)
+        if (currentlvl >= 2)
         {
             Slot2.SetActive(true);
         }

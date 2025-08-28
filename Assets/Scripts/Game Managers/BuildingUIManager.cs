@@ -1,5 +1,5 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class BuildingUIManager : MonoBehaviour
 {
@@ -99,13 +99,13 @@ public class BuildingUIManager : MonoBehaviour
 
                     if (bp != null && trading != null)
                     {
-                        trading.tradingSlots(bp.CurrentLevel);
+                        trading.TradingSlots(bp.CurrentLevel);
                     }
                 }
                 // If the building is not a dock, ensure all extra slots are hidden
                 else if (trading != null)
                 {
-                    trading.tradingSlots(0); // Pass 0 to hide all optional slots
+                    trading.TradingSlots(0); // Pass 0 to hide all optional slots
                 }
             }
             UpdateBuildingContent();
@@ -202,8 +202,6 @@ public class BuildingUIManager : MonoBehaviour
             GameManager.Instance.AddWood(woodRefund);
             GameManager.Instance.AddStone(stoneRefund);
             GameManager.Instance.AddMetal(metalRefund);
-
-            Debug.Log($"Demolished {selectedBuilding.name}. Refunded: {fundsRefund} Funds, {woodRefund} Wood, {stoneRefund} Stone, {metalRefund} Metal.");
         }
 
         if (bp != null)
